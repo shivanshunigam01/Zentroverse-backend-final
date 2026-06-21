@@ -1,11 +1,12 @@
 import Cms from "../models/Cms.js";
 import { cmsDefaults } from "../seed/cmsDefaults.js";
 
-const SECTION_KEYS = {
+const ARRAY_SECTION_KEYS = {
   "case-studies": "caseStudies",
   testimonials: "testimonials",
   gallery: "gallery",
   "product-demos": "productDemos",
+  faqs: "faqs",
 };
 
 function normalizePayload(body) {
@@ -73,27 +74,53 @@ export async function updateCms(req, res, next) {
 
 export async function updateCmsSection(req, res, next) {
   try {
-    const field = SECTION_KEYS[req.params.section];
-    if (!field) {
-      return res.status(400).json({ error: "Unknown section. Use case-studies, testimonials, gallery, or product-demos." });
-    }
-
-    const { items, categories } = req.body || {};
-    if (!Array.isArray(items)) {
-      return res.status(400).json({ error: "items array is required" });
-    }
-
+    const { section } = req.params;
     const doc = await ensureDefaultCms();
-    const payload = normalizePayload({
-      ...doc.payload,
-      [field]: items,
-      ...(req.params.section === "gallery" && Array.isArray(categories)
-        ? { galleryCategories: categories }
-        : {}),
-    });
 
-    const saved = await savePayload(payload);
-    res.json({ ok: true, cms: saved, section: req.params.section, count: items.length });
+    const arrayField = ARRAY_SECTION_KEYS[section];
+    if (arrayField) {
+      const { items, categories } = req.body || {};
+      if (!Array.isArray(items)) {
+        return res.status(400).json({ error: "items array is required" });
+      }
+
+      const payload = normalizePayload({
+        ...doc.payload,
+        [arrayField]: items,
+        ...(section === "gallery" && Array.isArray(categories)
+          ? { galleryCategories: categories }
+          : {}),
+      });
+
+      const saved = await savePayload(payload);
+      return res.json({ ok: true, cms: saved, section, count: items.length });
+    }
+
+    if (section === "company") {
+      const { company } = req.body || {};
+      if (!company || typeof company !== "object") {
+        return res.status(400).json({ error: "company object is required" });
+      }
+
+      const payload = normalizePayload({ ...doc.payload, company });
+      const saved = await savePayload(payload);
+      return res.json({ ok: true, cms: saved, section });
+    }
+
+    if (section === "hero-seo") {
+      const { hero, meta } = req.body || {};
+      if (!hero || !meta) {
+        return res.status(400).json({ error: "hero and meta objects are required" });
+      }
+
+      const payload = normalizePayload({ ...doc.payload, hero, meta });
+      const saved = await savePayload(payload);
+      return res.json({ ok: true, cms: saved, section });
+    }
+
+    return res.status(400).json({
+      error: "Unknown section. Use case-studies, testimonials, gallery, product-demos, faqs, company, or hero-seo.",
+    });
   } catch (error) {
     next(error);
   }
@@ -101,18 +128,32 @@ export async function updateCmsSection(req, res, next) {
 
 export async function getCmsSection(req, res, next) {
   try {
-    const field = SECTION_KEYS[req.params.section];
-    if (!field) {
-      return res.status(400).json({ error: "Unknown section" });
-    }
-
+    const { section } = req.params;
     const doc = await ensureDefaultCms();
     const payload = doc.payload;
-    res.json({
-      section: req.params.section,
-      items: payload[field] ?? [],
-      ...(field === "gallery" ? { categories: payload.galleryCategories ?? [] } : {}),
-    });
+
+    const arrayField = ARRAY_SECTION_KEYS[section];
+    if (arrayField) {
+      return res.json({
+        section,
+        items: payload[arrayField] ?? [],
+        ...(arrayField === "gallery" ? { categories: payload.galleryCategories ?? [] } : {}),
+      });
+    }
+
+    if (section === "company") {
+      return res.json({ section, company: payload.company ?? cmsDefaults.company });
+    }
+
+    if (section === "hero-seo") {
+      return res.json({
+        section,
+        hero: payload.hero ?? cmsDefaults.hero,
+        meta: payload.meta ?? cmsDefaults.meta,
+      });
+    }
+
+    return res.status(400).json({ error: "Unknown section" });
   } catch (error) {
     next(error);
   }
