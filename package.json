@@ -1,0 +1,23 @@
+{
+  "name": "zentroverse-backend",
+  "version": "1.0.0",
+  "description": "Node.js + Express + MongoDB backend for Zentroverse website",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.0",
+    "razorpay": "^2.9.6"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.4.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
