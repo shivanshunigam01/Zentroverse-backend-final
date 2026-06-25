@@ -7,6 +7,7 @@ const ARRAY_SECTION_KEYS = {
   gallery: "gallery",
   "product-demos": "productDemos",
   faqs: "faqs",
+  works: "works",
 };
 
 function normalizePayload(body) {
@@ -17,6 +18,7 @@ function normalizePayload(body) {
     company: { ...cmsDefaults.company, ...base.company },
     galleryCategories: Array.isArray(base.galleryCategories) ? base.galleryCategories : cmsDefaults.galleryCategories,
     caseStudies: Array.isArray(base.caseStudies) ? base.caseStudies : cmsDefaults.caseStudies,
+    works: Array.isArray(base.works) ? base.works : cmsDefaults.works,
     testimonials: Array.isArray(base.testimonials) ? base.testimonials : cmsDefaults.testimonials,
     gallery: Array.isArray(base.gallery) ? base.gallery : [],
     productDemos: Array.isArray(base.productDemos) ? base.productDemos : [],
@@ -119,7 +121,7 @@ export async function updateCmsSection(req, res, next) {
     }
 
     return res.status(400).json({
-      error: "Unknown section. Use case-studies, testimonials, gallery, product-demos, faqs, company, or hero-seo.",
+      error: "Unknown section. Use case-studies, testimonials, gallery, product-demos, faqs, works, company, or hero-seo.",
     });
   } catch (error) {
     next(error);
@@ -134,10 +136,15 @@ export async function getCmsSection(req, res, next) {
 
     const arrayField = ARRAY_SECTION_KEYS[section];
     if (arrayField) {
+      const items = Array.isArray(payload[arrayField])
+        ? payload[arrayField]
+        : (cmsDefaults[arrayField] ?? []);
       return res.json({
         section,
-        items: payload[arrayField] ?? [],
-        ...(arrayField === "gallery" ? { categories: payload.galleryCategories ?? [] } : {}),
+        items,
+        ...(arrayField === "gallery"
+          ? { categories: payload.galleryCategories ?? cmsDefaults.galleryCategories ?? [] }
+          : {}),
       });
     }
 

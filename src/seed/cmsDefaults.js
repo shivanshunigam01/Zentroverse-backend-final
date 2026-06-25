@@ -1,5 +1,7 @@
 /** Default CMS — aligned with create-space frontend (src/lib/cms/defaults.ts) */
 
+import { worksDefaults } from "./worksDefaults.js";
+
 export const cmsDefaults = {
   hero: {
     headline: "AI-Powered Business Growth & Digital Transformation Solutions",
@@ -128,6 +130,7 @@ export const cmsDefaults = {
       thumbnailUrl: "",
     },
   ],
+  works: worksDefaults,
   gallery: [],
   productDemos: [],
   faqs: [
