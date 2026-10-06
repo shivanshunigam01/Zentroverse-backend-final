@@ -1,11 +1,16 @@
 import crypto from "node:crypto";
 import Razorpay from "razorpay";
 import { env } from "../config/env.js";
+import { resolvePlanAmountPaise } from "./plans.controller.js";
 
-const planAmounts = {
+const planAmountsFallback = {
   starter: 499900,
   growth: 1299900,
   pro: 2499900,
+  "basic-monthly": 499900,
+  "basic-yearly": 4999000,
+  "pro-monthly": 1299900,
+  "pro-yearly": 12999000,
 };
 
 function getRazorpayClient() {
@@ -24,7 +29,7 @@ function getRazorpayClient() {
 export async function createOrder(req, res, next) {
   try {
     const { planId, email } = req.body || {};
-    const amount = planAmounts[planId];
+    const amount = (await resolvePlanAmountPaise(planId)) ?? planAmountsFallback[planId];
     if (!amount) return res.status(400).json({ error: "Invalid planId" });
 
     const razorpay = getRazorpayClient();

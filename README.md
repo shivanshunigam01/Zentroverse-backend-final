@@ -88,6 +88,62 @@ POST /api/razorpay/create-order
 POST /api/razorpay/verify-payment
 ```
 
+### Admin panel (JWT Bearer or `x-admin-token`)
+
+```http
+POST /api/admin/auth/login
+GET  /api/admin/auth/me
+GET  /api/admin/overview
+```
+
+Default admin (seeded on boot): `admin@zentroverse.in` / `Zentro@2026` (override with `ADMIN_EMAIL` / `ADMIN_PASSWORD`).
+
+### Pricing plans
+
+```http
+GET    /api/plans
+PUT    /api/plans/catalog          # admin
+POST   /api/plans                  # admin
+GET    /api/plans/:id
+PUT    /api/plans/:id              # admin
+DELETE /api/plans/:id              # admin
+PUT    /api/plans/trial            # admin
+POST   /api/plans/trial/start
+```
+
+### CRM (admin)
+
+`/api/crm/customers`, `/quotations`, `/invoices`, `/receipts`, `/settings`, `/import`
+
+### Bajaj ASD
+
+```http
+POST /api/bajaj-asd/apply
+GET  /api/bajaj-asd/applications   # admin
+POST /api/bajaj-asd/update         # admin
+```
+
+### HyOffers / Pulsar
+
+```http
+POST /api/hy-offers/referrals
+GET  /api/hy-offers/referrals      # admin
+POST /api/hy-offers/referrals/update
+GET  /api/hy-offers/referrals/lookup/:code
+POST /api/hy-offers/track-click
+POST /api/hy-offers/customers/import
+```
+
+### HR (`{ success, data }` envelope)
+
+`/api/hr/auth/register`, `/auth/login`, `/auth/me`, org/employees/attendance/leave, etc.
+
+### ZentroFlow
+
+`/api/zentroflow/auth/login` — demo: `demo@zentroflow.in` / `Demo@2026`
+
+All tenant routes under `/api/zentroflow/*` (leads, dashboard, integrations, jobs, …).
+
 ## Test Commands
 
 ```bash

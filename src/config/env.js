@@ -18,6 +18,10 @@ export const env = {
   leadWebhookUrl: process.env.LEAD_WEBHOOK_URL || "",
   whatsappNotifyUrl: process.env.WHATSAPP_NOTIFY_URL || "",
   adminNotifyEmail: process.env.ADMIN_NOTIFY_EMAIL || "digital@zentroverse.com",
+  jwtSecret: process.env.JWT_SECRET || "change-me-in-production",
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
+  adminEmail: process.env.ADMIN_EMAIL || "admin@zentroverse.in",
+  adminPassword: process.env.ADMIN_PASSWORD || "Zentro@2026",
 };
 
 export function getAllowedOrigins() {

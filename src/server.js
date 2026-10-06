@@ -2,10 +2,12 @@ import app from "./app.js";
 import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import { ensureDefaultCms } from "./controllers/cms.controller.js";
+import { runBootstrap } from "./services/bootstrap.service.js";
 
 async function bootstrap() {
   await connectDB();
   await ensureDefaultCms();
+  await runBootstrap();
 
   app.listen(env.port, () => {
     console.log(`Zentroverse API running on port ${env.port}`);

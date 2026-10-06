@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema(
       default: "pending",
     },
     passwordHash: { type: String, default: null, select: false },
+    subscriptionPlan: { type: String, default: null },
+    trialEndsAt: { type: Date, default: null },
+    trialPlanSlug: { type: String, default: null },
+    trialUsed: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
