@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { adminLogin, adminMe, adminOverview } from "../controllers/admin.controller.js";
+import { adminOverview } from "../controllers/admin.controller.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
+import { requireDb } from "../middleware/requireDb.js";
 
 const router = Router();
 
-router.post("/auth/login", adminLogin);
-router.get("/auth/me", adminMe);
+router.use(requireDb);
 router.get("/overview", requireAdmin, adminOverview);
 
 export default router;

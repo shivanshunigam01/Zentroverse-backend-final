@@ -7,6 +7,20 @@ import Cms from "../models/Cms.js";
 import { verifyPassword } from "../utils/password.js";
 import { signToken, verifyToken } from "../utils/jwt.js";
 import { env } from "../config/env.js";
+import { DB_UNAVAILABLE_MSG, isDbConnected } from "../utils/dbState.js";
+
+function envAdminProfile() {
+  return { id: "env-admin", email: env.adminEmail, name: "Zentroverse Admin", role: "admin" };
+}
+
+function tryEnvAdminLogin(email, password) {
+  const normalized = email.trim().toLowerCase();
+  if (normalized !== env.adminEmail.toLowerCase()) return null;
+  if (password !== env.adminPassword) return null;
+  const profile = envAdminProfile();
+  const token = signToken({ sub: profile.id, email: profile.email, kind: "admin", role: "admin" });
+  return { token, admin: profile };
+}
 
 export async function adminLogin(req, res, next) {
   try {
@@ -15,14 +29,28 @@ export async function adminLogin(req, res, next) {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
-    const admin = await AdminUser.findOne({ email: email.trim().toLowerCase() }).select("+passwordHash");
-    if (!admin || !verifyPassword(password, admin.passwordHash)) {
-      return res.status(401).json({ error: "Invalid email or password." });
+    if (!isDbConnected()) {
+      const envLogin = tryEnvAdminLogin(email, password);
+      if (envLogin) return res.json(envLogin);
+      return res.status(503).json({ error: DB_UNAVAILABLE_MSG });
     }
 
-    const token = signToken({ sub: admin._id.toString(), email: admin.email, kind: "admin", role: "admin" });
-    res.json({ token, admin: admin.toProfile() });
+    const admin = await AdminUser.findOne({ email: email.trim().toLowerCase() }).select("+passwordHash");
+    if (admin && verifyPassword(password, admin.passwordHash)) {
+      const token = signToken({ sub: admin._id.toString(), email: admin.email, kind: "admin", role: "admin" });
+      return res.json({ token, admin: admin.toProfile() });
+    }
+
+    const envLogin = tryEnvAdminLogin(email, password);
+    if (envLogin) return res.json(envLogin);
+
+    return res.status(401).json({ error: "Invalid email or password." });
   } catch (error) {
+    if (!isDbConnected()) {
+      const envLogin = tryEnvAdminLogin(req.body?.email || "", req.body?.password || "");
+      if (envLogin) return res.json(envLogin);
+      return res.status(503).json({ error: DB_UNAVAILABLE_MSG });
+    }
     next(error);
   }
 }
@@ -41,6 +69,21 @@ export async function adminMe(req, res, next) {
 
     const payload = verifyToken(token);
     if (!payload?.sub) return res.status(401).json({ error: "Invalid or expired token" });
+
+    if (payload.sub === "env-admin" || payload.sub === "legacy") {
+      return res.json({
+        admin: {
+          id: payload.sub,
+          email: payload.email || env.adminEmail,
+          name: "Zentroverse Admin",
+          role: "admin",
+        },
+      });
+    }
+
+    if (!isDbConnected()) {
+      return res.status(503).json({ error: DB_UNAVAILABLE_MSG });
+    }
 
     const admin = await AdminUser.findById(payload.sub);
     if (!admin) return res.status(401).json({ error: "Invalid or expired token" });
