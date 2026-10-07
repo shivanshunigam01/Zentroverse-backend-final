@@ -17,12 +17,22 @@ export function requireBearerKind(kind, { allowAdmin = false } = {}) {
       return next();
     }
 
+    const legacyAdmin = req.header("x-admin-token");
+    if (allowAdmin && legacyAdmin && legacyAdmin === env.adminPanelToken) {
+      req.auth = { kind: "admin", role: "admin" };
+      return next();
+    }
+
     const payload = verifyToken(token);
     if (!payload) {
       return res.status(401).json({ success: false, message: "Invalid or expired token" });
     }
 
-    if (payload.kind !== kind && !(allowAdmin && (payload.kind === "admin" || payload.role === "admin"))) {
+    const isAdminJwt =
+      allowAdmin &&
+      (payload.kind === "admin" || payload.role === "admin" || payload.sub === "env-admin" || payload.sub === "legacy");
+
+    if (payload.kind !== kind && !isAdminJwt) {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
