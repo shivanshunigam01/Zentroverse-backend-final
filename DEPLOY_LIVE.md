@@ -90,13 +90,24 @@ pm2 save
 pm2 startup
 ```
 
-If an **old** app (`trader-backend-mvc`) is still on port 8787:
+If an **old** app (`trader-backend-mvc` / `backend-api` → `/var/www/backend`) is still on port 8787:
 
 ```bash
 pm2 list
-pm2 stop trader-backend   # use the real name from pm2 list
-pm2 delete trader-backend  # if replacing completely
-pm2 start ecosystem.config.cjs
+pm2 stop backend-api
+pm2 delete backend-api
+cd /var/www/zentroverse-backend
+git pull origin master
+npm install
+pm2 start ecosystem.config.cjs --name zentroverse-api
+pm2 save
+```
+
+Confirm only Zentroverse answers on 8787:
+
+```bash
+curl -s http://127.0.0.1:8787/health
+# must show "service":"zentroverse-api" and "readyState":1
 ```
 
 Nginx/reverse proxy must forward `backend.zentrosure.com` → `http://127.0.0.1:8787`.

@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import { getAllowedOrigins } from "./config/env.js";
+import { corsOriginCallback } from "./config/cors.js";
 import leadRoutes from "./routes/lead.routes.js";
 import cmsRoutes from "./routes/cms.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
@@ -20,18 +20,15 @@ import { isCloudinaryConfigured } from "./services/cloudinary.service.js";
 
 const app = express();
 
-const allowedOrigins = getAllowedOrigins();
 app.use(
   cors({
-    origin(origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins === true) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error(`CORS not allowed for origin: ${origin}`));
-    },
+    origin: corsOriginCallback,
     credentials: true,
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-admin-token", "x-tenant-id"],
   }),
 );
+app.options("*", cors({ origin: corsOriginCallback, credentials: true }));
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 

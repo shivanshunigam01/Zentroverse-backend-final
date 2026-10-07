@@ -29,10 +29,11 @@ export async function adminLogin(req, res, next) {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
+    const envLogin = tryEnvAdminLogin(email, password);
+    if (envLogin) return res.json(envLogin);
+
     if (!isDbConnected()) {
-      const envLogin = tryEnvAdminLogin(email, password);
-      if (envLogin) return res.json(envLogin);
-      return res.status(503).json({ error: DB_UNAVAILABLE_MSG });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
     const admin = await AdminUser.findOne({ email: email.trim().toLowerCase() }).select("+passwordHash");
@@ -41,15 +42,12 @@ export async function adminLogin(req, res, next) {
       return res.json({ token, admin: admin.toProfile() });
     }
 
-    const envLogin = tryEnvAdminLogin(email, password);
-    if (envLogin) return res.json(envLogin);
-
     return res.status(401).json({ error: "Invalid email or password." });
   } catch (error) {
+    const envLogin = tryEnvAdminLogin(req.body?.email || "", req.body?.password || "");
+    if (envLogin) return res.json(envLogin);
     if (!isDbConnected()) {
-      const envLogin = tryEnvAdminLogin(req.body?.email || "", req.body?.password || "");
-      if (envLogin) return res.json(envLogin);
-      return res.status(503).json({ error: DB_UNAVAILABLE_MSG });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
     next(error);
   }
@@ -82,6 +80,16 @@ export async function adminMe(req, res, next) {
     }
 
     if (!isDbConnected()) {
+      if (payload.sub === "env-admin" || payload.email === env.adminEmail) {
+        return res.json({
+          admin: {
+            id: payload.sub,
+            email: payload.email || env.adminEmail,
+            name: "Zentroverse Admin",
+            role: "admin",
+          },
+        });
+      }
       return res.status(503).json({ error: DB_UNAVAILABLE_MSG });
     }
 
