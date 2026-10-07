@@ -20,7 +20,18 @@ import { isCloudinaryConfigured } from "./services/cloudinary.service.js";
 
 const app = express();
 
-app.use(cors({ origin: getAllowedOrigins(), credentials: true }));
+const allowedOrigins = getAllowedOrigins();
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins === true) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error(`CORS not allowed for origin: ${origin}`));
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 

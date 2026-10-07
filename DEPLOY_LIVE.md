@@ -61,7 +61,7 @@ ADMIN_PASSWORD=Zentro@2026
 ADMIN_PANEL_TOKEN=ZV-ADMIN-2026-DEMO
 JWT_SECRET=use-a-long-random-string-here
 
-CORS_ORIGIN=https://zentroverse.com,https://www.zentroverse.com,http://localhost:8080
+CORS_ORIGIN=https://zentroverse.com,https://www.zentroverse.com,https://backend.zentrosure.com,http://localhost:8080
 
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_key

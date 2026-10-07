@@ -24,7 +24,19 @@ export const env = {
   adminPassword: process.env.ADMIN_PASSWORD || "Zentro@2026",
 };
 
+function expandZentroverseOrigins(origins) {
+  const set = new Set(origins);
+  for (const origin of origins) {
+    if (origin === "https://zentroverse.com") set.add("https://www.zentroverse.com");
+    if (origin === "https://www.zentroverse.com") set.add("https://zentroverse.com");
+    if (origin === "http://zentroverse.com") set.add("http://www.zentroverse.com");
+    if (origin === "http://www.zentroverse.com") set.add("http://zentroverse.com");
+  }
+  return [...set];
+}
+
 export function getAllowedOrigins() {
   if (!env.corsOrigin) return true;
-  return env.corsOrigin.split(",").map((origin) => origin.trim()).filter(Boolean);
+  const list = env.corsOrigin.split(",").map((origin) => origin.trim()).filter(Boolean);
+  return expandZentroverseOrigins(list);
 }
