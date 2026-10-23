@@ -42,6 +42,38 @@ npm install
 
 ---
 
+## Common failures (from PM2 logs)
+
+| Log | Meaning | Fix |
+|-----|---------|-----|
+| `bad auth : authentication failed` | Wrong MongoDB user/password in `.env` | Atlas → Database Access → reset password → update `MONGODB_URI` (URL-encode `@`, `#`, etc. in password) |
+| `hr:build` → **`Killed`** | EC2 out of RAM during `tsc` | Add swap (below) or build `hr/dist` on your PC and upload |
+| Browser **CORS** + nginx **502** | Node never listened (Mongo exit or crash) | Fix Mongo + ensure `curl 127.0.0.1:8787/health` returns JSON |
+
+**Nginx is already OK** if you have `proxy_pass http://127.0.0.1:8787` for `backend.zentrosure.com`.
+
+### Low-RAM server: swap + HR build
+
+```bash
+sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+NODE_OPTIONS=--max-old-space-size=768 npm run hr:build
+```
+
+### Build HR on your PC, copy to server (if `tsc` keeps dying)
+
+On Windows (this repo):
+
+```bash
+cd Zentroverse-backend-final
+npm install
+npm run hr:build
+scp -r hr/dist ubuntu@YOUR_EC2_IP:/var/www/zentroverse-backend/hr/
+```
+
+Then on EC2: `pm2 restart zentroverse-api` (no need to run `tsc` on the server).
+
+---
+
 ## 4. Create `.env` on the server (never commit this file)
 
 ```bash

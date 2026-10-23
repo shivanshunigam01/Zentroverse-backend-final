@@ -6,9 +6,22 @@ import { runBootstrap } from "./services/bootstrap.service.js";
 import { mountPeopleflow } from "./peopleflow/mount.js";
 
 async function bootstrap() {
-  await connectDB();
-  await ensureDefaultCms();
-  await runBootstrap();
+  let dbConnected = false;
+  try {
+    await connectDB();
+    dbConnected = true;
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(
+      "[API] MongoDB unavailable — server will listen but admin/CMS/leads need a valid MONGODB_URI:",
+      msg,
+    );
+  }
+
+  if (dbConnected) {
+    await ensureDefaultCms();
+    await runBootstrap();
+  }
 
   try {
     await mountPeopleflow(app);
