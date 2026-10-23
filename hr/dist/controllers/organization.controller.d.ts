@@ -1,0 +1,14 @@
+import type { Request, Response } from "express";
+export declare function getOrganization(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateOrganization(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listMembers(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listDepartments(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getDepartment(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createDepartment(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateDepartment(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function deleteDepartment(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listDesignations(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getDesignation(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createDesignation(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateDesignation(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function deleteDesignation(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

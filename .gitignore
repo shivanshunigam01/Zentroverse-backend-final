@@ -3,4 +3,4 @@ node_modules/
 *.log
 .env
 .env.*.local
-hr/dist/
+# hr/dist is committed so EC2 can deploy without running tsc (low RAM)

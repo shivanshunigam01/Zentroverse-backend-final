@@ -60,7 +60,35 @@ sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapf
 NODE_OPTIONS=--max-old-space-size=768 npm run hr:build
 ```
 
-### Build HR on your PC, copy to server (if `tsc` keeps dying)
+### After `git pull` on EC2 (PeopleFlow / HR login)
+
+The repo includes **`hr/dist`** so you do **not** need `npm run hr:build` on the server unless you change `hr/` source.
+
+```bash
+cd /var/www/zentroverse-backend
+cp -a .env /tmp/zentroverse-backend.env.bak
+git stash push -m "env" -- .env 2>/dev/null || true
+git pull origin master
+cp -a /tmp/zentroverse-backend.env.bak .env
+npm install
+pm2 delete zentroverse-api 2>/dev/null || true
+pm2 start ecosystem.config.cjs
+pm2 save
+curl -s http://127.0.0.1:8787/health          # "peopleflow": true
+curl -s http://127.0.0.1:8787/api/v1/health   # PeopleFlow API JSON
+```
+
+In `.env` set (32+ char random strings in production):
+
+```env
+JWT_ACCESS_SECRET=your-long-access-secret-min-32-chars
+JWT_REFRESH_SECRET=your-long-refresh-secret-min-32-chars
+PEOPLEFLOW_APP_URL=https://www.zentroverse.com
+```
+
+**First HR user:** open https://www.zentroverse.com/hr/register and create an organization account (not the main site `/admin` login).
+
+### Build HR on your PC, copy to server (only if you changed `hr/` source)
 
 On Windows (this repo):
 

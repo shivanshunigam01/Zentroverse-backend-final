@@ -1,0 +1,11 @@
+export declare const GOAL_STATUSES: readonly ["not_started", "in_progress", "completed", "cancelled"];
+export type GoalStatus = (typeof GOAL_STATUSES)[number];
+export declare const REVIEW_STATUSES: readonly ["draft", "submitted"];
+export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
+export declare const REVIEW_KINDS: readonly ["self", "manager"];
+export type ReviewKind = (typeof REVIEW_KINDS)[number];
+export declare const PERFORMANCE_RATINGS: readonly [1, 2, 3, 4, 5];
+export type PerformanceRating = (typeof PERFORMANCE_RATINGS)[number];
+export declare const PERFORMANCE_RATING_LABELS: Record<PerformanceRating, string>;
+export declare const GOAL_STATUS_LABELS: Record<GoalStatus, string>;
+export declare function statusFromProgress(progress: number, current?: GoalStatus): GoalStatus;

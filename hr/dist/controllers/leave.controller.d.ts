@@ -1,0 +1,13 @@
+import type { Request, Response } from "express";
+export declare function listTypes(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createType(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateType(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listBalances(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function previewLeave(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getCalendar(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listRequests(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function applyLeave(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getRequest(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function cancelLeave(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function approveLeave(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function rejectLeave(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

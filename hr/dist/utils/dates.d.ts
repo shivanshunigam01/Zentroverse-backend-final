@@ -1,0 +1,43 @@
+declare const WEEKDAY_INDEX: Record<string, number>;
+export declare function dateKeyInTimeZone(date: Date, timeZone: string): string;
+export declare function utcDateFromKey(dateKey: string): Date;
+export declare function addUtcDays(date: Date, days: number): Date;
+export declare function weekdayKey(date: Date): string;
+export declare function lastWorkingDateKeys(count: number, todayKey: string, workingDays: string[]): string[];
+export declare function monthEndKeys(count: number, todayKey: string): {
+    key: string;
+    label: string;
+    end: Date;
+}[];
+export declare function formatDayLabel(dateKey: string): string;
+export declare function relativeDayLabel(dateKey: string, todayKey: string): string;
+export declare function relativeTimeLabel(from: Date, now?: Date): string;
+export declare function dateKeyFromDate(date: Date): string;
+export declare function formatShortDate(dateKey: string): string;
+export declare function formatLeaveRange(startKey: string, endKey: string): string;
+export declare function initialsFromName(name: string): string;
+export declare function leaveTypeLabel(type: string): string;
+export declare function timePartsInTimeZone(date: Date, timeZone: string): {
+    weekday: string;
+    year: string;
+    month: string;
+    day: string;
+    hour: string;
+    minute: string;
+    second: string;
+    dateKey: string;
+};
+export declare function formatTimeInTimeZone(date: Date, timeZone: string): string;
+export declare function parseHHmmMinutes(value: string): number;
+export declare function expectedWorkingMinutes(start: string, end: string): number;
+export declare function getTimeZoneOffsetMs(date: Date, timeZone: string): number;
+export declare function zonedDateTime(dateKey: string, hhmm: string, timeZone: string): Date;
+export declare function isWorkingDateKey(dateKey: string, workingDays: string[]): boolean;
+export declare function monthDateKeys(month: string): {
+    keys: string[];
+    start: Date;
+    end: Date;
+};
+export declare function formatDurationMinutes(total: number): string;
+export declare function countLeaveDays(startKey: string, endKey: string, workingDays: string[], holidayKeys: Set<string>): number;
+export { WEEKDAY_INDEX };

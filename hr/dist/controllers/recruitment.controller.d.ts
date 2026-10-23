@@ -1,0 +1,15 @@
+import type { Request, Response } from "express";
+export declare function listJobs(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getJob(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createJob(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateJob(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function deleteJob(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listCandidates(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getCandidate(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createCandidate(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateCandidate(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listApplications(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getApplication(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createApplication(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateApplication(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getBoard(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

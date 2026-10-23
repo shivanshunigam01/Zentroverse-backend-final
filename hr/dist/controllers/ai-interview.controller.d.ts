@@ -1,0 +1,13 @@
+import type { Request, Response } from "express";
+export declare function listAiInterviews(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getAiInterview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createAiInterviewForApplication(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function resendAiInterviewInvitation(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function regenerateAiInterviewLink(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function overrideAiInterviewResult(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getAiInterviewConfig(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateAiInterviewConfig(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getPublicAiInterview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function startPublicAiInterview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function submitPublicAiInterviewAnswer(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function completePublicAiInterview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

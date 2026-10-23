@@ -1,0 +1,512 @@
+import { INTERVIEW_DECISION_LABELS, INTERVIEW_FEEDBACK_FIELDS, INTERVIEW_STATUS_LABELS, INTERVIEW_TYPE_LABELS, normalizeInterviewDecision, } from "../constants/interviews.js";
+import { MESSAGES } from "../constants/messages.js";
+import { CandidateModel } from "../models/candidate.model.js";
+import { CandidateSubmissionModel } from "../models/candidate-submission.model.js";
+import { InterviewModel } from "../models/interview.model.js";
+import { OrganizationModel } from "../models/organization.model.js";
+import { RecruitmentMandateModel } from "../models/recruitment-mandate.model.js";
+import { UserModel } from "../models/user.model.js";
+import { recordActivity } from "../utils/activity.js";
+import { recordAudit } from "../utils/audit.js";
+import { AppError } from "../utils/app-error.js";
+import { utcDateFromKey } from "../utils/dates.js";
+import { parseObjectId } from "../utils/object-id.js";
+import { paginationMeta, paginationSkip } from "../utils/pagination.js";
+import { applySearch, mongoSort, resolvedSearch } from "../utils/search.js";
+import { buildCandidateInterviewEmail, buildInterviewerInterviewEmail, sendEmail, } from "./email.service.js";
+const INTERVIEW_POPULATE = [
+    { path: "candidateId", select: "firstName lastName name email candidateNumber" },
+    { path: "mandateId", select: "mandateNumber position status" },
+    { path: "submissionId", select: "status submittedAt" },
+    { path: "interviewers", select: "name email role" },
+];
+function asId(value) {
+    if (!value)
+        return "";
+    if (typeof value === "object" && value !== null && "_id" in value) {
+        return String(value._id);
+    }
+    return String(value);
+}
+function isoOf(value) {
+    if (value instanceof Date)
+        return value.toISOString();
+    if (typeof value === "string" && value)
+        return new Date(value).toISOString();
+    return "";
+}
+function dateKeyOf(value) {
+    const iso = isoOf(value);
+    return iso ? iso.slice(0, 10) : "";
+}
+function isDuplicateKey(error) {
+    return typeof error === "object" && error !== null && "code" in error && error.code === 11000;
+}
+function toUserRef(value) {
+    if (!value)
+        return null;
+    if (typeof value === "object" && value !== null && "name" in value) {
+        const user = value;
+        return {
+            id: String(user._id),
+            name: user.name,
+            email: user.email ?? "",
+            role: user.role ?? "",
+        };
+    }
+    return { id: String(value), name: "", email: "", role: "" };
+}
+function toCandidateRef(value) {
+    if (!value)
+        return null;
+    if (typeof value === "object" && value !== null && ("name" in value || "email" in value)) {
+        const candidate = value;
+        const name = String(candidate.name ?? "").trim() ||
+            `${candidate.firstName ?? ""} ${candidate.lastName ?? ""}`.trim();
+        return {
+            id: String(candidate._id),
+            name,
+            email: candidate.email ?? "",
+            candidateNumber: candidate.candidateNumber ?? "",
+        };
+    }
+    return { id: String(value), name: "", email: "", candidateNumber: "" };
+}
+function toMandateRef(value) {
+    if (!value)
+        return null;
+    if (typeof value === "object" && value !== null && "mandateNumber" in value) {
+        const mandate = value;
+        return {
+            id: String(mandate._id),
+            mandateNumber: mandate.mandateNumber,
+            position: mandate.position ?? "",
+            status: mandate.status ?? "",
+        };
+    }
+    return { id: String(value), mandateNumber: "", position: "", status: "" };
+}
+function toSubmissionRef(value) {
+    if (!value)
+        return null;
+    if (typeof value === "object" && value !== null && ("status" in value || "_id" in value)) {
+        const submission = value;
+        return {
+            id: String(submission._id),
+            status: String(submission.status ?? ""),
+        };
+    }
+    return { id: String(value), status: "" };
+}
+function feedbackOf(value) {
+    const source = value && typeof value === "object" ? value : {};
+    return {
+        technicalScore: Number(source.technicalScore ?? 0),
+        communicationScore: Number(source.communicationScore ?? 0),
+        cultureFitScore: Number(source.cultureFitScore ?? 0),
+        leadershipScore: Number(source.leadershipScore ?? 0),
+        compensationFit: Number(source.compensationFit ?? 0),
+        joiningRisk: Number(source.joiningRisk ?? 0),
+        comments: String(source.comments ?? ""),
+    };
+}
+function parseDateTime(value, label = "Invalid date and time") {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        throw AppError.badRequest(label);
+    }
+    return date;
+}
+function formatInterviewWhen(iso) {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime()))
+        return iso || "To be confirmed";
+    return new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "full",
+        timeStyle: "short",
+        timeZone: "Asia/Kolkata",
+    }).format(date);
+}
+async function notifyInterviewParticipants(interview, isUpdate = false) {
+    if (interview.status === "CANCELLED" || interview.status === "COMPLETED") {
+        return;
+    }
+    const org = await OrganizationModel.findById(interview.organizationId).select("name").lean();
+    const companyName = String(org?.name ?? "PeopleFlow");
+    const candidateName = interview.candidate?.name || "Candidate";
+    const interviewerNames = interview.interviewers.map((user) => user.name).filter(Boolean);
+    const position = interview.mandate?.position || "Open role";
+    const shared = {
+        candidateName,
+        interviewerNames,
+        position,
+        companyName,
+        round: interview.round,
+        interviewTypeLabel: interview.interviewTypeLabel,
+        scheduledAtLabel: formatInterviewWhen(interview.scheduledAt),
+        durationMinutes: interview.duration,
+        isUpdate,
+    };
+    const sends = [];
+    const candidateEmail = interview.candidate?.email?.trim();
+    if (candidateEmail) {
+        const content = buildCandidateInterviewEmail({
+            ...shared,
+            recipientName: candidateName,
+        });
+        sends.push(sendEmail({
+            to: candidateEmail,
+            subject: content.subject,
+            text: content.text,
+        }));
+    }
+    else {
+        console.warn("[Email] Interview candidate has no email; skipped candidate notice");
+    }
+    for (const interviewer of interview.interviewers) {
+        const email = interviewer.email?.trim();
+        if (!email) {
+            console.warn(`[Email] Interviewer ${interviewer.name || interviewer.id} has no email; skipped`);
+            continue;
+        }
+        const content = buildInterviewerInterviewEmail({
+            ...shared,
+            recipientName: interviewer.name || "Interviewer",
+        });
+        sends.push(sendEmail({
+            to: email,
+            subject: content.subject,
+            text: content.text,
+        }));
+    }
+    if (sends.length > 0) {
+        await Promise.allSettled(sends);
+    }
+}
+export function toPublicInterview(doc) {
+    const candidate = toCandidateRef(doc.candidateId);
+    const mandate = toMandateRef(doc.mandateId);
+    const submission = toSubmissionRef(doc.submissionId);
+    const interviewType = String(doc.interviewType ?? "VIDEO") || "VIDEO";
+    const status = String(doc.status ?? "SCHEDULED") || "SCHEDULED";
+    const decisionRaw = normalizeInterviewDecision(String(doc.decision ?? ""));
+    const decision = decisionRaw || "";
+    const interviewers = Array.isArray(doc.interviewers)
+        ? doc.interviewers.map(toUserRef).filter((user) => user !== null)
+        : [];
+    return {
+        id: String(doc._id ?? doc.id),
+        organizationId: asId(doc.organizationId),
+        candidateId: candidate?.id ?? asId(doc.candidateId),
+        candidate,
+        mandateId: mandate?.id ?? asId(doc.mandateId),
+        mandate,
+        submissionId: submission?.id ?? asId(doc.submissionId),
+        submission,
+        round: Number(doc.round ?? 1),
+        interviewType,
+        interviewTypeLabel: INTERVIEW_TYPE_LABELS[interviewType] ?? interviewType,
+        scheduledAt: isoOf(doc.scheduledAt),
+        duration: Number(doc.duration ?? 60),
+        interviewers,
+        interviewerIds: interviewers.map((user) => user.id),
+        status,
+        statusLabel: INTERVIEW_STATUS_LABELS[status] ?? status,
+        feedback: feedbackOf(doc.feedback),
+        decision,
+        decisionLabel: decision
+            ? (INTERVIEW_DECISION_LABELS[decision] ?? decision)
+            : "",
+        nextAction: String(doc.nextAction ?? ""),
+        nextActionDeadline: dateKeyOf(doc.nextActionDeadline),
+        createdAt: isoOf(doc.createdAt),
+        updatedAt: isoOf(doc.updatedAt),
+    };
+}
+async function requireInterview(organizationId, id) {
+    parseObjectId(id);
+    const interview = await InterviewModel.findOne({ _id: id, organizationId }).populate([
+        ...INTERVIEW_POPULATE,
+    ]);
+    if (!interview) {
+        throw AppError.notFound(MESSAGES.INTERVIEW_NOT_FOUND);
+    }
+    return interview;
+}
+async function assertCandidate(organizationId, candidateId) {
+    parseObjectId(candidateId, "Invalid candidate");
+    const candidate = await CandidateModel.findOne({ _id: candidateId, organizationId }).select("_id name firstName lastName email candidateNumber");
+    if (!candidate) {
+        throw AppError.badRequest(MESSAGES.CANDIDATE_NOT_IN_ORGANIZATION);
+    }
+    return candidate;
+}
+async function assertMandate(organizationId, mandateId) {
+    parseObjectId(mandateId, "Invalid mandate");
+    const mandate = await RecruitmentMandateModel.findOne({
+        _id: mandateId,
+        organizationId,
+    }).select("_id mandateNumber position status");
+    if (!mandate) {
+        throw AppError.badRequest(MESSAGES.MANDATE_NOT_IN_ORGANIZATION);
+    }
+    return mandate;
+}
+async function assertSubmission(organizationId, submissionId) {
+    parseObjectId(submissionId, "Invalid submission");
+    const submission = await CandidateSubmissionModel.findOne({
+        _id: submissionId,
+        organizationId,
+    }).select("_id candidateId mandateId status");
+    if (!submission) {
+        throw AppError.badRequest(MESSAGES.SUBMISSION_NOT_FOUND);
+    }
+    return submission;
+}
+async function assertInterviewers(organizationId, interviewerIds) {
+    if (!interviewerIds?.length)
+        return [];
+    const uniqueIds = [...new Set(interviewerIds)];
+    uniqueIds.forEach((id) => parseObjectId(id, "Invalid interviewer"));
+    const users = await UserModel.find({
+        _id: { $in: uniqueIds },
+        organizationId,
+        isActive: true,
+    }).select("_id");
+    if (users.length !== uniqueIds.length) {
+        throw AppError.badRequest(MESSAGES.INVALID_RECRUITERS);
+    }
+    return uniqueIds;
+}
+async function assertNoRoundConflict(organizationId, submissionId, round, excludeId) {
+    const existing = await InterviewModel.findOne({
+        organizationId,
+        submissionId,
+        round,
+        status: { $ne: "CANCELLED" },
+        ...(excludeId ? { _id: { $ne: excludeId } } : {}),
+    }).select("_id");
+    if (existing) {
+        throw AppError.conflict(MESSAGES.INTERVIEW_ROUND_EXISTS);
+    }
+}
+async function syncSubmissionFromInterviewDecision(organizationId, submissionId, status, decision) {
+    if (status !== "COMPLETED")
+        return;
+    const normalized = normalizeInterviewDecision(decision);
+    let nextSubmissionStatus = null;
+    if (normalized === "SELECTED")
+        nextSubmissionStatus = "SHORTLISTED";
+    else if (normalized === "NEXT_ROUND")
+        nextSubmissionStatus = "UNDER_REVIEW";
+    else if (normalized === "REJECTED")
+        nextSubmissionStatus = "REJECTED";
+    else if (normalized === "ON_HOLD")
+        nextSubmissionStatus = "UNDER_REVIEW";
+    if (!nextSubmissionStatus)
+        return;
+    await CandidateSubmissionModel.updateOne({ _id: submissionId, organizationId }, { $set: { status: nextSubmissionStatus } });
+}
+function mergeFeedback(current, patch) {
+    if (!patch)
+        return current;
+    const next = { ...current };
+    for (const field of INTERVIEW_FEEDBACK_FIELDS) {
+        const value = patch[field];
+        if (value !== undefined)
+            next[field] = value;
+    }
+    if (patch.comments !== undefined)
+        next.comments = patch.comments ?? "";
+    return next;
+}
+export async function listInterviews(auth, query) {
+    const filter = { organizationId: auth.organizationId };
+    if (query.candidateId) {
+        parseObjectId(query.candidateId, "Invalid candidate");
+        filter.candidateId = query.candidateId;
+    }
+    if (query.mandateId) {
+        parseObjectId(query.mandateId, "Invalid mandate");
+        filter.mandateId = query.mandateId;
+    }
+    if (query.submissionId) {
+        parseObjectId(query.submissionId, "Invalid submission");
+        filter.submissionId = query.submissionId;
+    }
+    if (query.status)
+        filter.status = query.status;
+    if (query.interviewType)
+        filter.interviewType = query.interviewType;
+    applySearch(filter, ["decision", "nextAction"], resolvedSearch(query));
+    const [items, total] = await Promise.all([
+        InterviewModel.find(filter)
+            .populate([...INTERVIEW_POPULATE])
+            .sort(mongoSort(query, { scheduledAt: -1, createdAt: -1 }))
+            .skip(paginationSkip(query))
+            .limit(query.limit)
+            .lean(),
+        InterviewModel.countDocuments(filter),
+    ]);
+    return {
+        items: items.map((item) => toPublicInterview(item)),
+        ...paginationMeta(total, query),
+    };
+}
+export async function getInterview(auth, id) {
+    const interview = await requireInterview(auth.organizationId, id);
+    return toPublicInterview(interview.toObject());
+}
+export async function createInterview(auth, input) {
+    const submission = await assertSubmission(auth.organizationId, input.submissionId);
+    const candidateId = input.candidateId ?? String(submission.candidateId);
+    const mandateId = input.mandateId ?? String(submission.mandateId);
+    if (String(submission.candidateId) !== candidateId) {
+        throw AppError.badRequest(MESSAGES.SUBMISSION_CANDIDATE_MISMATCH);
+    }
+    if (String(submission.mandateId) !== mandateId) {
+        throw AppError.badRequest(MESSAGES.SUBMISSION_MANDATE_MISMATCH);
+    }
+    const candidate = await assertCandidate(auth.organizationId, candidateId);
+    const mandate = await assertMandate(auth.organizationId, mandateId);
+    const interviewers = await assertInterviewers(auth.organizationId, input.interviewers);
+    const round = input.round ?? 1;
+    const status = input.status ?? "SCHEDULED";
+    if (status !== "CANCELLED") {
+        await assertNoRoundConflict(auth.organizationId, String(submission._id), round);
+    }
+    let created;
+    try {
+        created = await InterviewModel.create({
+            organizationId: auth.organizationId,
+            candidateId: candidate._id,
+            mandateId: mandate._id,
+            submissionId: submission._id,
+            round,
+            interviewType: input.interviewType ?? "VIDEO",
+            scheduledAt: parseDateTime(input.scheduledAt),
+            duration: input.duration ?? 60,
+            interviewers,
+            status,
+            feedback: mergeFeedback(feedbackOf(null), input.feedback),
+            decision: normalizeInterviewDecision(input.decision ?? "") || input.decision || "",
+            nextAction: input.nextAction ?? "",
+            nextActionDeadline: input.nextActionDeadline
+                ? utcDateFromKey(input.nextActionDeadline)
+                : null,
+        });
+    }
+    catch (error) {
+        if (isDuplicateKey(error)) {
+            throw AppError.conflict(MESSAGES.INTERVIEW_ROUND_EXISTS);
+        }
+        throw error;
+    }
+    await syncSubmissionFromInterviewDecision(auth.organizationId, String(submission._id), status, String(created.decision ?? ""));
+    await created.populate([...INTERVIEW_POPULATE]);
+    const publicInterview = toPublicInterview(created.toObject());
+    await recordActivity(auth.organizationId, {
+        title: `Interview scheduled for ${candidate.name || "candidate"}`,
+        detail: `${mandate.mandateNumber} · Round ${round}`,
+        tone: "success",
+    });
+    await notifyInterviewParticipants(publicInterview, false);
+    return publicInterview;
+}
+export async function updateInterview(auth, id, input) {
+    const interview = await requireInterview(auth.organizationId, id);
+    const previousData = toPublicInterview(interview.toObject());
+    if (input.submissionId !== undefined) {
+        const submission = await assertSubmission(auth.organizationId, input.submissionId);
+        interview.set("submissionId", submission._id);
+        if (input.candidateId === undefined)
+            interview.set("candidateId", submission.candidateId);
+        if (input.mandateId === undefined)
+            interview.set("mandateId", submission.mandateId);
+    }
+    if (input.candidateId !== undefined) {
+        const candidate = await assertCandidate(auth.organizationId, input.candidateId);
+        interview.set("candidateId", candidate._id);
+    }
+    if (input.mandateId !== undefined) {
+        const mandate = await assertMandate(auth.organizationId, input.mandateId);
+        interview.set("mandateId", mandate._id);
+    }
+    const submission = await assertSubmission(auth.organizationId, asId(interview.submissionId));
+    if (String(submission.candidateId) !== asId(interview.candidateId)) {
+        throw AppError.badRequest(MESSAGES.SUBMISSION_CANDIDATE_MISMATCH);
+    }
+    if (String(submission.mandateId) !== asId(interview.mandateId)) {
+        throw AppError.badRequest(MESSAGES.SUBMISSION_MANDATE_MISMATCH);
+    }
+    if (input.round !== undefined)
+        interview.round = input.round;
+    if (input.interviewType !== undefined)
+        interview.interviewType = input.interviewType;
+    if (input.scheduledAt !== undefined)
+        interview.scheduledAt = parseDateTime(input.scheduledAt);
+    if (input.duration !== undefined)
+        interview.duration = input.duration;
+    if (input.interviewers !== undefined) {
+        interview.set("interviewers", await assertInterviewers(auth.organizationId, input.interviewers));
+    }
+    if (input.status !== undefined)
+        interview.status = input.status;
+    if (input.feedback !== undefined) {
+        interview.set("feedback", mergeFeedback(feedbackOf(interview.feedback), input.feedback));
+    }
+    if (input.decision !== undefined) {
+        interview.decision = normalizeInterviewDecision(input.decision) || input.decision || "";
+    }
+    if (input.nextAction !== undefined)
+        interview.nextAction = input.nextAction ?? "";
+    if (input.nextActionDeadline !== undefined) {
+        interview.nextActionDeadline = input.nextActionDeadline
+            ? utcDateFromKey(input.nextActionDeadline)
+            : null;
+    }
+    const nextStatus = interview.status || "SCHEDULED";
+    if (nextStatus !== "CANCELLED") {
+        await assertNoRoundConflict(auth.organizationId, asId(interview.submissionId), Number(interview.round ?? 1), id);
+    }
+    try {
+        await interview.save();
+    }
+    catch (error) {
+        if (isDuplicateKey(error)) {
+            throw AppError.conflict(MESSAGES.INTERVIEW_ROUND_EXISTS);
+        }
+        throw error;
+    }
+    await syncSubmissionFromInterviewDecision(auth.organizationId, asId(interview.submissionId), nextStatus, String(interview.decision ?? ""));
+    await interview.populate([...INTERVIEW_POPULATE]);
+    const publicInterview = toPublicInterview(interview.toObject());
+    await recordAudit(auth, {
+        module: "INTERVIEWS",
+        action: "UPDATED",
+        recordId: publicInterview.id,
+        previousData,
+        newData: publicInterview,
+    });
+    const scheduleChanged = previousData.scheduledAt !== publicInterview.scheduledAt ||
+        previousData.duration !== publicInterview.duration ||
+        previousData.interviewType !== publicInterview.interviewType ||
+        previousData.round !== publicInterview.round ||
+        previousData.status !== publicInterview.status ||
+        previousData.interviewerIds.join(",") !== publicInterview.interviewerIds.join(",");
+    if (scheduleChanged) {
+        await notifyInterviewParticipants(publicInterview, true);
+    }
+    return publicInterview;
+}
+export async function deleteInterview(auth, id) {
+    parseObjectId(id);
+    const deleted = await InterviewModel.findOneAndDelete({
+        _id: id,
+        organizationId: auth.organizationId,
+    });
+    if (!deleted) {
+        throw AppError.notFound(MESSAGES.INTERVIEW_NOT_FOUND);
+    }
+}
+//# sourceMappingURL=interview.service.js.map

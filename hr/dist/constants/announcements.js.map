@@ -1,0 +1,1 @@
+{"version":3,"file":"announcements.js","sourceRoot":"","sources":["../../src/constants/announcements.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,MAAM,uBAAuB,GAAG;IACrC,SAAS;IACT,OAAO;IACP,QAAQ;IACR,WAAW;IACX,aAAa;CACL,CAAA;AAIV,MAAM,CAAC,MAAM,uBAAuB,GAAG,CAAC,QAAQ,EAAE,MAAM,EAAE,QAAQ,CAAU,CAAA;AAI5E,MAAM,CAAC,MAAM,yBAAyB,GAAG,CAAC,OAAO,EAAE,WAAW,EAAE,MAAM,EAAE,SAAS,CAAU,CAAA"}

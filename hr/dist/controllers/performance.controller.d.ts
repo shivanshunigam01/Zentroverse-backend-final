@@ -1,0 +1,13 @@
+import type { Request, Response } from "express";
+export declare function getOverview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listGoals(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getGoal(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createGoal(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateGoal(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateGoalProgress(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function deleteGoal(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listReviews(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getReview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createReview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateReview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function submitReview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

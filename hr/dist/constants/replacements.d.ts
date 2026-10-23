@@ -1,0 +1,13 @@
+export declare const REPLACEMENT_REASONS: readonly ["PERFORMANCE", "RESIGNED", "ABSCONDING", "CLIENT_REQUEST", "ROLE_MISMATCH", "CULTURE_FIT", "SALARY_DELAY", "ROLE_CHANGED", "LOCATION_CHANGED", "COMPENSATION_CHANGED", "RETRENCHMENT", "REDUNDANCY", "BUSINESS_CLOSURE", "RESTRUCTURING", "UNSAFE_CONDITIONS", "CLIENT_MISCONDUCT", "OTHER"];
+export type ReplacementReason = (typeof REPLACEMENT_REASONS)[number];
+export declare const REPLACEMENT_REASON_LABELS: Record<ReplacementReason, string>;
+export declare const REPLACEMENT_STATUSES: readonly ["ACTIVE", "REPLACEMENT_REQUESTED", "REPLACEMENT_IN_PROGRESS", "REPLACED", "EXPIRED", "CLOSED"];
+export type ReplacementStatus = (typeof REPLACEMENT_STATUSES)[number];
+export declare const REPLACEMENT_STATUS_LABELS: Record<ReplacementStatus, string>;
+export declare const REPLACEMENT_OPEN_STATUSES: readonly ["ACTIVE", "REPLACEMENT_REQUESTED", "REPLACEMENT_IN_PROGRESS"];
+export declare function isOpenReplacementStatus(status: string): boolean;
+export declare function isClosedReplacementStatus(status: string): status is "CLOSED" | "EXPIRED" | "REPLACED";
+export declare const REPLACEMENT_ELIGIBILITY_RESULTS: readonly ["APPROVED", "REVIEW", "NOT_ELIGIBLE"];
+export type ReplacementEligibilityResult = (typeof REPLACEMENT_ELIGIBILITY_RESULTS)[number];
+export declare const REPLACEMENT_ELIGIBILITY_LABELS: Record<ReplacementEligibilityResult, string>;
+export declare const MAX_FREE_REPLACEMENTS = 1;

@@ -1,0 +1,12 @@
+export declare const CANDIDATE_SOURCES: readonly ["LINKEDIN", "NAUKRI", "REFERRAL", "WEBSITE", "DIRECT", "CONSULTANT", "OTHER"];
+export type CandidateSource = (typeof CANDIDATE_SOURCES)[number];
+export declare const CANDIDATE_STATUSES: readonly ["NEW", "SCREENING", "ACTIVE", "SUBMITTED", "INTERVIEWING", "OFFERED", "HIRED", "REJECTED", "ON_HOLD"];
+export type CandidateStatus = (typeof CANDIDATE_STATUSES)[number];
+export declare const CANDIDATE_STATUS_LABELS: Record<CandidateStatus, string>;
+export declare const CANDIDATE_SOURCE_LABELS: Record<CandidateSource, string>;
+export declare const CANDIDATE_CONSENT_METHODS: readonly ["FORM", "EMAIL", "WHATSAPP", "VERBAL", "OTHER"];
+export type CandidateConsentMethod = (typeof CANDIDATE_CONSENT_METHODS)[number];
+export declare const CANDIDATE_CONSENT_METHOD_LABELS: Record<CandidateConsentMethod, string>;
+export declare const CANDIDATE_CONSENT_PURPOSES: readonly ["SOURCING", "SUBMISSION", "INTERVIEW", "BACKGROUND_CHECK", "TALENT_POOL", "OTHER"];
+export type CandidateConsentPurpose = (typeof CANDIDATE_CONSENT_PURPOSES)[number];
+export declare const CANDIDATE_CONSENT_PURPOSE_LABELS: Record<CandidateConsentPurpose, string>;

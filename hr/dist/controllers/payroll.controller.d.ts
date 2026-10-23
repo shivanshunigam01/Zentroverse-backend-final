@@ -1,0 +1,11 @@
+import type { Request, Response } from "express";
+export declare function listPayrolls(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function previewPayroll(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function generatePayroll(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getPayroll(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getPayslip(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function markPayrollPaid(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listSalaryStructures(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getSalaryStructure(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createSalaryStructure(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateSalaryStructure(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

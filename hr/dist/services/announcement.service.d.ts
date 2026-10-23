@@ -1,0 +1,177 @@
+import { type UserRole } from "../constants/roles.js";
+import type { AuthContext } from "../types/auth.js";
+import type { AnnouncementListQueryInput, AnnouncementWriteInput, UpdateAnnouncementInput } from "../validators/announcement.validators.js";
+export declare function listAnnouncements(auth: AuthContext, query: AnnouncementListQueryInput): Promise<{
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    items: {
+        id: string;
+        organizationId: string;
+        title: string;
+        content: string;
+        excerpt: string;
+        category: string;
+        priority: string;
+        createdBy: {
+            id: string;
+            name: string;
+        } | null;
+        publishDate: string | null;
+        publishLabel: string | null;
+        expiryDate: string | null;
+        expiryLabel: string | null;
+        targetAudience: UserRole[];
+        audienceLabel: string;
+        isPublished: boolean;
+        visibility: "draft" | "expired" | "scheduled" | "live";
+        createdAt: string;
+        updatedAt: string;
+    }[];
+    featured: {
+        id: string;
+        organizationId: string;
+        title: string;
+        content: string;
+        excerpt: string;
+        category: string;
+        priority: string;
+        createdBy: {
+            id: string;
+            name: string;
+        } | null;
+        publishDate: string | null;
+        publishLabel: string | null;
+        expiryDate: string | null;
+        expiryLabel: string | null;
+        targetAudience: UserRole[];
+        audienceLabel: string;
+        isPublished: boolean;
+        visibility: "draft" | "expired" | "scheduled" | "live";
+        createdAt: string;
+        updatedAt: string;
+    } | null;
+    summary: {
+        live: number;
+        drafts: number;
+        scheduled: number;
+        expired: number;
+    } | undefined;
+}>;
+export declare function getAnnouncement(auth: AuthContext, id: string): Promise<{
+    id: string;
+    organizationId: string;
+    title: string;
+    content: string;
+    excerpt: string;
+    category: string;
+    priority: string;
+    createdBy: {
+        id: string;
+        name: string;
+    } | null;
+    publishDate: string | null;
+    publishLabel: string | null;
+    expiryDate: string | null;
+    expiryLabel: string | null;
+    targetAudience: UserRole[];
+    audienceLabel: string;
+    isPublished: boolean;
+    visibility: "draft" | "expired" | "scheduled" | "live";
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function createAnnouncement(auth: AuthContext, input: AnnouncementWriteInput): Promise<{
+    id: string;
+    organizationId: string;
+    title: string;
+    content: string;
+    excerpt: string;
+    category: string;
+    priority: string;
+    createdBy: {
+        id: string;
+        name: string;
+    } | null;
+    publishDate: string | null;
+    publishLabel: string | null;
+    expiryDate: string | null;
+    expiryLabel: string | null;
+    targetAudience: UserRole[];
+    audienceLabel: string;
+    isPublished: boolean;
+    visibility: "draft" | "expired" | "scheduled" | "live";
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function updateAnnouncement(auth: AuthContext, id: string, input: UpdateAnnouncementInput): Promise<{
+    id: string;
+    organizationId: string;
+    title: string;
+    content: string;
+    excerpt: string;
+    category: string;
+    priority: string;
+    createdBy: {
+        id: string;
+        name: string;
+    } | null;
+    publishDate: string | null;
+    publishLabel: string | null;
+    expiryDate: string | null;
+    expiryLabel: string | null;
+    targetAudience: UserRole[];
+    audienceLabel: string;
+    isPublished: boolean;
+    visibility: "draft" | "expired" | "scheduled" | "live";
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function publishAnnouncement(auth: AuthContext, id: string): Promise<{
+    id: string;
+    organizationId: string;
+    title: string;
+    content: string;
+    excerpt: string;
+    category: string;
+    priority: string;
+    createdBy: {
+        id: string;
+        name: string;
+    } | null;
+    publishDate: string | null;
+    publishLabel: string | null;
+    expiryDate: string | null;
+    expiryLabel: string | null;
+    targetAudience: UserRole[];
+    audienceLabel: string;
+    isPublished: boolean;
+    visibility: "draft" | "expired" | "scheduled" | "live";
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function unpublishAnnouncement(auth: AuthContext, id: string): Promise<{
+    id: string;
+    organizationId: string;
+    title: string;
+    content: string;
+    excerpt: string;
+    category: string;
+    priority: string;
+    createdBy: {
+        id: string;
+        name: string;
+    } | null;
+    publishDate: string | null;
+    publishLabel: string | null;
+    expiryDate: string | null;
+    expiryLabel: string | null;
+    targetAudience: UserRole[];
+    audienceLabel: string;
+    isPublished: boolean;
+    visibility: "draft" | "expired" | "scheduled" | "live";
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function deleteAnnouncement(auth: AuthContext, id: string): Promise<void>;

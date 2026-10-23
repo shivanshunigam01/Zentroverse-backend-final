@@ -1,0 +1,12 @@
+export declare const GENDERS: readonly ["male", "female", "non_binary", "prefer_not_to_say"];
+export type Gender = (typeof GENDERS)[number];
+export declare const EMPLOYMENT_TYPES: readonly ["full_time", "part_time", "contract", "intern"];
+export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
+export declare const EMPLOYMENT_STATUSES: readonly ["active", "inactive", "on_leave", "terminated"];
+export type EmploymentStatus = (typeof EMPLOYMENT_STATUSES)[number];
+export declare const WORK_LOCATIONS: readonly ["office", "remote", "hybrid"];
+export type WorkLocation = (typeof WORK_LOCATIONS)[number];
+export declare const EMERGENCY_RELATIONSHIPS: readonly ["spouse", "parent", "sibling", "child", "friend", "other"];
+export type EmergencyRelationship = (typeof EMERGENCY_RELATIONSHIPS)[number];
+export declare const EMPLOYABLE_ROLES: readonly ["HR_ADMIN", "MANAGER", "EMPLOYEE"];
+export type EmployableRole = (typeof EMPLOYABLE_ROLES)[number];

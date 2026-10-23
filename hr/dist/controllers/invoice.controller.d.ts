@@ -1,0 +1,6 @@
+import type { Request, Response } from "express";
+export declare function listInvoices(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getInvoice(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function createInvoice(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateInvoice(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function deleteInvoice(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

@@ -1,0 +1,131 @@
+import { z } from "zod";
+export declare const createReplacementSchema: z.ZodObject<{
+    candidateId: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>;
+    mandateId: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>;
+    clientId: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>;
+    joiningId: z.ZodString;
+    replacementReason: z.ZodEnum<{
+        PERFORMANCE: "PERFORMANCE";
+        RESIGNED: "RESIGNED";
+        ABSCONDING: "ABSCONDING";
+        CLIENT_REQUEST: "CLIENT_REQUEST";
+        ROLE_MISMATCH: "ROLE_MISMATCH";
+        CULTURE_FIT: "CULTURE_FIT";
+        SALARY_DELAY: "SALARY_DELAY";
+        ROLE_CHANGED: "ROLE_CHANGED";
+        LOCATION_CHANGED: "LOCATION_CHANGED";
+        COMPENSATION_CHANGED: "COMPENSATION_CHANGED";
+        RETRENCHMENT: "RETRENCHMENT";
+        REDUNDANCY: "REDUNDANCY";
+        BUSINESS_CLOSURE: "BUSINESS_CLOSURE";
+        RESTRUCTURING: "RESTRUCTURING";
+        UNSAFE_CONDITIONS: "UNSAFE_CONDITIONS";
+        CLIENT_MISCONDUCT: "CLIENT_MISCONDUCT";
+        OTHER: "OTHER";
+    }>;
+    replacementRequestedDate: z.ZodOptional<z.ZodString>;
+    status: z.ZodOptional<z.ZodEnum<{
+        ACTIVE: "ACTIVE";
+        CLOSED: "CLOSED";
+        EXPIRED: "EXPIRED";
+        REPLACED: "REPLACED";
+        REPLACEMENT_REQUESTED: "REPLACEMENT_REQUESTED";
+        REPLACEMENT_IN_PROGRESS: "REPLACEMENT_IN_PROGRESS";
+    }>>;
+    replacementCandidateId: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>;
+    closedAt: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
+    exclusions: z.ZodOptional<z.ZodObject<{
+        salaryDelayed: z.ZodOptional<z.ZodBoolean>;
+        roleChanged: z.ZodOptional<z.ZodBoolean>;
+        locationChanged: z.ZodOptional<z.ZodBoolean>;
+        compensationChanged: z.ZodOptional<z.ZodBoolean>;
+        retrenchment: z.ZodOptional<z.ZodBoolean>;
+        redundancy: z.ZodOptional<z.ZodBoolean>;
+        businessClosure: z.ZodOptional<z.ZodBoolean>;
+        restructuring: z.ZodOptional<z.ZodBoolean>;
+        unsafeConditions: z.ZodOptional<z.ZodBoolean>;
+        clientMisconduct: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strip>>;
+    manualOverride: z.ZodOptional<z.ZodBoolean>;
+    remarks: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+}, z.core.$strip>;
+export declare const updateReplacementSchema: z.ZodObject<{
+    candidateId: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>>;
+    mandateId: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>>;
+    clientId: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>>;
+    replacementRequestedDate: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    status: z.ZodOptional<z.ZodOptional<z.ZodEnum<{
+        ACTIVE: "ACTIVE";
+        CLOSED: "CLOSED";
+        EXPIRED: "EXPIRED";
+        REPLACED: "REPLACED";
+        REPLACEMENT_REQUESTED: "REPLACEMENT_REQUESTED";
+        REPLACEMENT_IN_PROGRESS: "REPLACEMENT_IN_PROGRESS";
+    }>>>;
+    replacementCandidateId: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">, z.ZodNull]>>, z.ZodTransform<string | undefined, string | null | undefined>>>;
+    closedAt: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>>;
+    exclusions: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        salaryDelayed: z.ZodOptional<z.ZodBoolean>;
+        roleChanged: z.ZodOptional<z.ZodBoolean>;
+        locationChanged: z.ZodOptional<z.ZodBoolean>;
+        compensationChanged: z.ZodOptional<z.ZodBoolean>;
+        retrenchment: z.ZodOptional<z.ZodBoolean>;
+        redundancy: z.ZodOptional<z.ZodBoolean>;
+        businessClosure: z.ZodOptional<z.ZodBoolean>;
+        restructuring: z.ZodOptional<z.ZodBoolean>;
+        unsafeConditions: z.ZodOptional<z.ZodBoolean>;
+        clientMisconduct: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strip>>>;
+    manualOverride: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    remarks: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
+    joiningId: z.ZodOptional<z.ZodString>;
+    replacementReason: z.ZodOptional<z.ZodEnum<{
+        PERFORMANCE: "PERFORMANCE";
+        RESIGNED: "RESIGNED";
+        ABSCONDING: "ABSCONDING";
+        CLIENT_REQUEST: "CLIENT_REQUEST";
+        ROLE_MISMATCH: "ROLE_MISMATCH";
+        CULTURE_FIT: "CULTURE_FIT";
+        SALARY_DELAY: "SALARY_DELAY";
+        ROLE_CHANGED: "ROLE_CHANGED";
+        LOCATION_CHANGED: "LOCATION_CHANGED";
+        COMPENSATION_CHANGED: "COMPENSATION_CHANGED";
+        RETRENCHMENT: "RETRENCHMENT";
+        REDUNDANCY: "REDUNDANCY";
+        BUSINESS_CLOSURE: "BUSINESS_CLOSURE";
+        RESTRUCTURING: "RESTRUCTURING";
+        UNSAFE_CONDITIONS: "UNSAFE_CONDITIONS";
+        CLIENT_MISCONDUCT: "CLIENT_MISCONDUCT";
+        OTHER: "OTHER";
+    }>>;
+}, z.core.$strip>;
+export declare const replacementListQuerySchema: z.ZodObject<{
+    search: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    q: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    sort: z.ZodOptional<z.ZodEnum<{
+        createdAt: "createdAt";
+        status: "status";
+        replacementRequestedDate: "replacementRequestedDate";
+    }>>;
+    order: z.ZodOptional<z.ZodEnum<{
+        asc: "asc";
+        desc: "desc";
+    }>>;
+    page: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+    limit: z.ZodDefault<z.ZodCoercedNumber<unknown>>;
+    candidateId: z.ZodOptional<z.ZodString>;
+    mandateId: z.ZodOptional<z.ZodString>;
+    clientId: z.ZodOptional<z.ZodString>;
+    joiningId: z.ZodOptional<z.ZodString>;
+    status: z.ZodOptional<z.ZodEnum<{
+        ACTIVE: "ACTIVE";
+        CLOSED: "CLOSED";
+        EXPIRED: "EXPIRED";
+        REPLACED: "REPLACED";
+        REPLACEMENT_REQUESTED: "REPLACEMENT_REQUESTED";
+        REPLACEMENT_IN_PROGRESS: "REPLACEMENT_IN_PROGRESS";
+    }>>;
+}, z.core.$strip>;
+export type CreateReplacementInput = z.infer<typeof createReplacementSchema>;
+export type UpdateReplacementInput = z.infer<typeof updateReplacementSchema>;
+export type ReplacementListQueryInput = z.infer<typeof replacementListQuerySchema>;

@@ -1,0 +1,1 @@
+{"version":3,"file":"local-file.routes.js","sourceRoot":"","sources":["../../src/routes/local-file.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAA;AAEhC,OAAO,EAAE,kBAAkB,EAAE,MAAM,yCAAyC,CAAA;AAC5E,OAAO,EAAE,YAAY,EAAE,MAAM,gCAAgC,CAAA;AAE7D,MAAM,CAAC,MAAM,iBAAiB,GAAG,MAAM,EAAE,CAAA;AAEzC,iBAAiB,CAAC,GAAG,CAAC,YAAY,EAAE,YAAY,CAAC,kBAAkB,CAAC,CAAC,CAAA"}

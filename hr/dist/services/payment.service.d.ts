@@ -1,0 +1,126 @@
+import type { AuthContext } from "../types/auth.js";
+import type { CreatePaymentInput, PaymentListQueryInput, UpdatePaymentInput } from "../validators/payment.validators.js";
+import { toPublicInvoice } from "./invoice.service.js";
+export declare function toPublicPayment(doc: Record<string, unknown>): {
+    id: string;
+    organizationId: string;
+    invoiceId: string;
+    invoice: {
+        id: string;
+        invoiceNumber: string;
+        amount: number;
+        paidAmount: number;
+        outstandingAmount: number;
+        status: string;
+    } | null;
+    amount: number;
+    paymentDate: string;
+    paymentMethod: "BANK_TRANSFER" | "UPI" | "NEFT" | "RTGS" | "CHEQUE" | "CASH" | "CARD";
+    paymentMethodLabel: string;
+    transactionReference: string;
+    status: "PENDING" | "COMPLETED" | "FAILED" | "REVERSED";
+    statusLabel: string;
+    remarks: string;
+    createdAt: string;
+    updatedAt: string;
+};
+export declare function listPayments(auth: AuthContext, query: PaymentListQueryInput): Promise<{
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    items: {
+        id: string;
+        organizationId: string;
+        invoiceId: string;
+        invoice: {
+            id: string;
+            invoiceNumber: string;
+            amount: number;
+            paidAmount: number;
+            outstandingAmount: number;
+            status: string;
+        } | null;
+        amount: number;
+        paymentDate: string;
+        paymentMethod: "BANK_TRANSFER" | "UPI" | "NEFT" | "RTGS" | "CHEQUE" | "CASH" | "CARD";
+        paymentMethodLabel: string;
+        transactionReference: string;
+        status: "PENDING" | "COMPLETED" | "FAILED" | "REVERSED";
+        statusLabel: string;
+        remarks: string;
+        createdAt: string;
+        updatedAt: string;
+    }[];
+}>;
+export declare function getPayment(auth: AuthContext, id: string): Promise<{
+    id: string;
+    organizationId: string;
+    invoiceId: string;
+    invoice: {
+        id: string;
+        invoiceNumber: string;
+        amount: number;
+        paidAmount: number;
+        outstandingAmount: number;
+        status: string;
+    } | null;
+    amount: number;
+    paymentDate: string;
+    paymentMethod: "BANK_TRANSFER" | "UPI" | "NEFT" | "RTGS" | "CHEQUE" | "CASH" | "CARD";
+    paymentMethodLabel: string;
+    transactionReference: string;
+    status: "PENDING" | "COMPLETED" | "FAILED" | "REVERSED";
+    statusLabel: string;
+    remarks: string;
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function createPayment(auth: AuthContext, input: CreatePaymentInput): Promise<{
+    id: string;
+    organizationId: string;
+    invoiceId: string;
+    invoice: {
+        id: string;
+        invoiceNumber: string;
+        amount: number;
+        paidAmount: number;
+        outstandingAmount: number;
+        status: string;
+    } | null;
+    amount: number;
+    paymentDate: string;
+    paymentMethod: "BANK_TRANSFER" | "UPI" | "NEFT" | "RTGS" | "CHEQUE" | "CASH" | "CARD";
+    paymentMethodLabel: string;
+    transactionReference: string;
+    status: "PENDING" | "COMPLETED" | "FAILED" | "REVERSED";
+    statusLabel: string;
+    remarks: string;
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function updatePayment(auth: AuthContext, id: string, input: UpdatePaymentInput): Promise<{
+    id: string;
+    organizationId: string;
+    invoiceId: string;
+    invoice: {
+        id: string;
+        invoiceNumber: string;
+        amount: number;
+        paidAmount: number;
+        outstandingAmount: number;
+        status: string;
+    } | null;
+    amount: number;
+    paymentDate: string;
+    paymentMethod: "BANK_TRANSFER" | "UPI" | "NEFT" | "RTGS" | "CHEQUE" | "CASH" | "CARD";
+    paymentMethodLabel: string;
+    transactionReference: string;
+    status: "PENDING" | "COMPLETED" | "FAILED" | "REVERSED";
+    statusLabel: string;
+    remarks: string;
+    createdAt: string;
+    updatedAt: string;
+}>;
+export declare function deletePayment(auth: AuthContext, id: string): Promise<void>;
+export { toPublicInvoice };

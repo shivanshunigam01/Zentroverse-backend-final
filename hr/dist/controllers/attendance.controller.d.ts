@@ -1,0 +1,12 @@
+import type { Request, Response } from "express";
+export declare function getToday(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function checkIn(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function checkOut(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function startBreak(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function endBreak(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getCalendar(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function listAttendance(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getDailyOverview(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getMonthlyReport(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function getAttendance(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function updateAttendance(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

@@ -1,0 +1,11 @@
+export declare const FOLLOW_UP_TYPES: readonly ["CALL", "EMAIL", "MESSAGE", "MEETING"];
+export type FollowUpType = (typeof FOLLOW_UP_TYPES)[number];
+export declare const FOLLOW_UP_TYPE_LABELS: Record<FollowUpType, string>;
+export declare const FOLLOW_UP_CANDIDATE_STATUSES: readonly ["CONFIRMED", "POSITIVE", "UNDECIDED", "CONCERNED", "DROPPING", "UNREACHABLE"];
+export type FollowUpCandidateStatus = (typeof FOLLOW_UP_CANDIDATE_STATUSES)[number];
+export declare const FOLLOW_UP_CANDIDATE_STATUS_LABELS: Record<FollowUpCandidateStatus, string>;
+export declare const FOLLOW_UP_RISK_LEVELS: readonly ["LOW", "MEDIUM", "HIGH"];
+export type FollowUpRiskLevel = (typeof FOLLOW_UP_RISK_LEVELS)[number];
+export declare const FOLLOW_UP_RISK_LEVEL_LABELS: Record<FollowUpRiskLevel, string>;
+export declare const JOINING_PROBABILITY_MIN = 0;
+export declare const JOINING_PROBABILITY_MAX = 10;
