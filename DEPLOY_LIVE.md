@@ -48,6 +48,7 @@ npm install
 |-----|---------|-----|
 | `bad auth : authentication failed` | Wrong MongoDB user/password in `.env` | Atlas → Database Access → reset password → update `MONGODB_URI` (URL-encode `@`, `#`, etc. in password) |
 | `hr:build` → **`Killed`** | EC2 out of RAM during `tsc` | Add swap (below) or build `hr/dist` on your PC and upload |
+| HR login **404** / `GET /api/v1/health` **404** | PeopleFlow not mounted (`hr/dist` missing) | `npm run hr:build` then `pm2 restart zentroverse-api`; `/health` must show `"peopleflow":true` |
 | Browser **CORS** + nginx **502** | Node never listened (Mongo exit or crash) | Fix Mongo + ensure `curl 127.0.0.1:8787/health` returns JSON |
 
 **Nginx is already OK** if you have `proxy_pass http://127.0.0.1:8787` for `backend.zentrosure.com`.

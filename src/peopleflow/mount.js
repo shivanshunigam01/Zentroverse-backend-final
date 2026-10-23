@@ -8,6 +8,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type {import("express").ErrorRequestHandler | null} */
 let peopleflowErrorHandler = null;
 
+let peopleflowMounted = false;
+
+export function isPeopleflowMounted() {
+  return peopleflowMounted;
+}
+
 function applyPeopleflowEnv() {
   const devAccess = "dev-peopleflow-access-secret-min16chars";
   const devRefresh = "dev-peopleflow-refresh-secret-min16chars";
@@ -82,6 +88,7 @@ function hrDistFile(relativePath) {
  * @param {import("express").Express} app
  */
 export async function mountPeopleflow(app) {
+  peopleflowMounted = false;
   applyPeopleflowEnv();
 
   const dbMod = await import(hrDistFile("config/db.js"));
@@ -100,6 +107,7 @@ export async function mountPeopleflow(app) {
   app.use("/api/v1", peopleflowRouter);
   app.use("/api/hr", peopleflowRouter);
 
+  peopleflowMounted = true;
   console.info("[PeopleFlow] /api/v1 and legacy /api/hr mounted");
 }
 
