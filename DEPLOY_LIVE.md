@@ -112,6 +112,50 @@ curl -s http://127.0.0.1:8787/health
 
 Nginx/reverse proxy must forward `backend.zentrosure.com` → `http://127.0.0.1:8787`.
 
+See `docs/nginx-backend.zentrosure.example.conf` for a minimal site block.
+
+### Browser says “CORS error” but you changed CORS in code
+
+1. From your PC: `curl https://backend.zentrosure.com/health`
+   - **502 / HTML** → Node is **down** or nginx points at the **wrong port**. Fix PM2 + `npm install` first; **nginx CORS settings will not help**.
+   - **JSON** with `"service":"zentroverse-api"` → API is up; then check browser Network tab for real 401/404 vs CORS.
+
+2. On the server (SSH):
+
+```bash
+curl -s http://127.0.0.1:8787/health
+pm2 logs zentroverse-api --lines 40
+ss -tlnp | grep 8787
+```
+
+- If **127.0.0.1:8787 fails** but PM2 says online → read error log (`cookie-parser`, `hr/dist` missing, etc.):
+
+```bash
+cd /var/www/zentroverse-backend   # your clone path
+git pull origin master
+npm install
+npm run hr:build
+pm2 delete zentroverse-api
+pm2 start ecosystem.config.cjs
+pm2 save
+curl -s http://127.0.0.1:8787/health
+```
+
+3. **Nginx** — only verify proxy target (usually `/etc/nginx/sites-enabled/`):
+
+```bash
+sudo grep -R "proxy_pass\|server_name.*zentrosure" /etc/nginx/sites-enabled/
+```
+
+You want **`proxy_pass http://127.0.0.1:8787`** (or upstream block with that port).  
+Do **not** add duplicate `Access-Control-Allow-Origin` in nginx unless Node is removed; Express already sends CORS.
+
+After Node works locally, public URL must match:
+
+```bash
+curl -s https://backend.zentrosure.com/health
+```
+
 ---
 
 ## 7. Verify
