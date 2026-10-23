@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -9,9 +10,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let peopleflowErrorHandler = null;
 
 let peopleflowMounted = false;
+/** @type {string | null} */
+let peopleflowMountError = null;
 
 export function isPeopleflowMounted() {
   return peopleflowMounted;
+}
+
+export function getPeopleflowMountError() {
+  return peopleflowMountError;
 }
 
 function applyPeopleflowEnv() {
@@ -89,7 +96,15 @@ function hrDistFile(relativePath) {
  */
 export async function mountPeopleflow(app) {
   peopleflowMounted = false;
+  peopleflowMountError = null;
   applyPeopleflowEnv();
+
+  const distIndex = path.join(__dirname, "../../hr/dist/routes/index.js");
+  if (!fs.existsSync(distIndex)) {
+    peopleflowMountError =
+      "hr/dist missing on server. Run: git pull origin master && npm install (see DEPLOY_LIVE.md).";
+    throw new Error(peopleflowMountError);
+  }
 
   const dbMod = await import(hrDistFile("config/db.js"));
   try {
@@ -109,6 +124,11 @@ export async function mountPeopleflow(app) {
 
   peopleflowMounted = true;
   console.info("[PeopleFlow] /api/v1 and legacy /api/hr mounted");
+}
+
+export function recordPeopleflowMountFailure(err) {
+  peopleflowMounted = false;
+  peopleflowMountError = err instanceof Error ? err.message : String(err);
 }
 
 export function getPeopleflowErrorHandler() {

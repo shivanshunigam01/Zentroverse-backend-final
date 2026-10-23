@@ -3,7 +3,7 @@ import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import { ensureDefaultCms } from "./controllers/cms.controller.js";
 import { runBootstrap } from "./services/bootstrap.service.js";
-import { mountPeopleflow } from "./peopleflow/mount.js";
+import { mountPeopleflow, recordPeopleflowMountFailure } from "./peopleflow/mount.js";
 
 async function bootstrap() {
   let dbConnected = false;
@@ -26,8 +26,14 @@ async function bootstrap() {
   try {
     await mountPeopleflow(app);
   } catch (err) {
+    recordPeopleflowMountFailure(err);
     console.error("[PeopleFlow] Failed to mount /api/v1:", err instanceof Error ? err.message : err);
-    console.error("[PeopleFlow] Run `npm run hr:build` and set JWT_ACCESS_SECRET / JWT_REFRESH_SECRET.");
+    console.error(
+      "[PeopleFlow] Fix: git pull origin master && npm install && pm2 restart zentroverse-api",
+    );
+    if (env.nodeEnv === "production") {
+      console.error("[PeopleFlow] HR login will 404 until hr/dist is on disk and mount succeeds.");
+    }
   }
 
   registerErrorHandlers();

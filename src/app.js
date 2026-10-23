@@ -17,7 +17,11 @@ import hyOffersRoutes from "./routes/hyOffers.routes.js";
 import zentroflowRoutes from "./routes/zentroflow.routes.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { isCloudinaryConfigured } from "./services/cloudinary.service.js";
-import { getPeopleflowErrorHandler, isPeopleflowMounted } from "./peopleflow/mount.js";
+import {
+  getPeopleflowErrorHandler,
+  getPeopleflowMountError,
+  isPeopleflowMounted,
+} from "./peopleflow/mount.js";
 
 const app = express();
 
@@ -38,6 +42,7 @@ app.get("/health", (_req, res) => {
     admin: true,
     crm: true,
     peopleflow: isPeopleflowMounted(),
+    peopleflowError: getPeopleflowMountError(),
     zentroflow: true,
     hyOffers: true,
     bajajAsd: true,
