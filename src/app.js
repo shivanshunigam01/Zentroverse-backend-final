@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
-import { corsOriginCallback } from "./config/cors.js";
+import { corsOptions } from "./config/cors.js";
 import leadRoutes from "./routes/lead.routes.js";
 import cmsRoutes from "./routes/cms.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
@@ -13,24 +14,18 @@ import plansRoutes from "./routes/plans.routes.js";
 import crmRoutes from "./routes/crm.routes.js";
 import bajajRoutes from "./routes/bajaj.routes.js";
 import hyOffersRoutes from "./routes/hyOffers.routes.js";
-import hrRoutes from "./routes/hr.routes.js";
 import zentroflowRoutes from "./routes/zentroflow.routes.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import { isCloudinaryConfigured } from "./services/cloudinary.service.js";
+import { getPeopleflowErrorHandler } from "./peopleflow/mount.js";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: corsOriginCallback,
-    credentials: true,
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-admin-token", "x-tenant-id"],
-  }),
-);
-app.options("*", cors({ origin: corsOriginCallback, credentials: true }));
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
+app.use(cookieParser());
 
 app.get("/health", (_req, res) => {
   res.json({
@@ -41,7 +36,7 @@ app.get("/health", (_req, res) => {
     plans: true,
     admin: true,
     crm: true,
-    hr: true,
+    peopleflow: true,
     zentroflow: true,
     hyOffers: true,
     bajajAsd: true,
@@ -64,10 +59,20 @@ app.use("/api/plans", plansRoutes);
 app.use("/api/crm", crmRoutes);
 app.use("/api/bajaj-asd", bajajRoutes);
 app.use("/api/hy-offers", hyOffersRoutes);
-app.use("/api/hr", hrRoutes);
 app.use("/api/zentroflow", zentroflowRoutes);
 
-app.use(notFound);
-app.use(errorHandler);
+export function registerErrorHandlers() {
+  const pfError = getPeopleflowErrorHandler();
+  if (pfError) {
+    app.use((err, req, res, next) => {
+      if (req.originalUrl.startsWith("/api/v1")) {
+        return pfError(err, req, res, next);
+      }
+      return next(err);
+    });
+  }
+  app.use(notFound);
+  app.use(errorHandler);
+}
 
 export default app;

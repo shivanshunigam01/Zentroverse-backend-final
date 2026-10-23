@@ -16,8 +16,12 @@ Complete Node.js + Express + MongoDB backend for the Zentroverse website.
 ```bash
 cp .env.example .env
 npm install
+npm run hr:install
 npm run dev
 ```
+
+PeopleFlow full HR SaaS API: **`GET /api/v1/health`** (built from `hr/` on `predev` / `prestart`).
+Legacy slim **`/api/hr`** routes were removed — use **`/api/v1`** from the frontend.
 
 Default server URL:
 

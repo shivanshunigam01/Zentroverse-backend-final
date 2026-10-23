@@ -1,16 +1,27 @@
-import app from "./app.js";
+import app, { registerErrorHandlers } from "./app.js";
 import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import { ensureDefaultCms } from "./controllers/cms.controller.js";
 import { runBootstrap } from "./services/bootstrap.service.js";
+import { mountPeopleflow } from "./peopleflow/mount.js";
 
 async function bootstrap() {
   await connectDB();
   await ensureDefaultCms();
   await runBootstrap();
 
+  try {
+    await mountPeopleflow(app);
+  } catch (err) {
+    console.error("[PeopleFlow] Failed to mount /api/v1:", err instanceof Error ? err.message : err);
+    console.error("[PeopleFlow] Run `npm run hr:build` and set JWT_ACCESS_SECRET / JWT_REFRESH_SECRET.");
+  }
+
+  registerErrorHandlers();
+
   app.listen(env.port, () => {
     console.log(`Zentroverse API running on port ${env.port}`);
+    console.log("PeopleFlow HR: GET /api/v1/health");
   });
 }
 
