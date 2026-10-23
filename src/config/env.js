@@ -5,7 +5,9 @@ dotenv.config();
 export const env = {
   port: process.env.PORT || 8787,
   nodeEnv: process.env.NODE_ENV || "development",
-  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  corsOrigin:
+    process.env.CORS_ORIGIN ||
+    "http://localhost:8080,http://localhost:5173,https://www.zentroverse.com,https://zentroverse.com",
   mongodbUri: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/zentroverse",
   useMemoryDb: process.env.USE_MEMORY_DB === "true",
   adminPanelToken: process.env.ADMIN_PANEL_TOKEN || "ZV-ADMIN-2026-DEMO",

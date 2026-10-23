@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
-import { corsOptions } from "./config/cors.js";
+import { applyCredentialedCorsHeaders, corsOptions } from "./config/cors.js";
 import leadRoutes from "./routes/lead.routes.js";
 import cmsRoutes from "./routes/cms.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
@@ -23,6 +23,7 @@ const app = express();
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
+app.use(applyCredentialedCorsHeaders);
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 app.use(cookieParser());
