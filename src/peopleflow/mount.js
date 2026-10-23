@@ -2,6 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import cors from "cors";
+
+import { applyCredentialedCorsHeaders, corsOptions } from "../config/cors.js";
 import { env, getAllowedOrigins } from "../config/env.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -119,8 +122,12 @@ export async function mountPeopleflow(app) {
 
   peopleflowErrorHandler = errorMod.errorHandler;
   const peopleflowRouter = routesMod.createApiRouter();
-  app.use("/api/v1", peopleflowRouter);
-  app.use("/api/hr", peopleflowRouter);
+  for (const prefix of ["/api/v1", "/api/hr"]) {
+    app.use(prefix, cors(corsOptions));
+    app.options(`${prefix}/*`, cors(corsOptions));
+    app.use(prefix, applyCredentialedCorsHeaders);
+    app.use(prefix, peopleflowRouter);
+  }
 
   peopleflowMounted = true;
   console.info("[PeopleFlow] /api/v1 and legacy /api/hr mounted");
