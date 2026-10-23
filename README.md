@@ -23,6 +23,21 @@ npm run dev
 PeopleFlow full HR SaaS API: **`GET /api/v1/health`** (built from `hr/` on `predev` / `prestart`).
 Legacy slim **`/api/hr`** routes were removed — use **`/api/v1`** from the frontend.
 
+### Production deploy (PM2 / EC2)
+
+After `git pull`, always install deps (required for `cookie-parser`, `cors`, etc.):
+
+```bash
+cd /var/www/zentroverse-backend   # your server path
+git pull origin master
+npm run deploy                      # npm install + hr:build
+pm2 restart zentroverse-api
+curl -s http://127.0.0.1:8787/health
+```
+
+If PM2 logs show `Cannot find package 'cookie-parser'`, the fix is **`npm install`** in the repo root, then restart.
+A **502** from nginx (browser shows “CORS error”) usually means the Node process is down — fix the PM2 error first.
+
 Default server URL:
 
 ```bash

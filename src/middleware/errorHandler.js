@@ -1,5 +1,13 @@
+import { applyCredentialedCorsHeaders } from "../config/cors.js";
+
+function ensureCors(req, res, next) {
+  applyCredentialedCorsHeaders(req, res, () => next());
+}
+
 export function notFound(req, res) {
-  res.status(404).json({ error: `Route not found: ${req.method} ${req.originalUrl}` });
+  ensureCors(req, res, () => {
+    res.status(404).json({ error: `Route not found: ${req.method} ${req.originalUrl}` });
+  });
 }
 
 export function errorHandler(error, _req, res, _next) {
@@ -26,5 +34,7 @@ export function errorHandler(error, _req, res, _next) {
   }
 
   if (statusCode >= 500) console.error(error);
-  res.status(statusCode).json({ error: message });
+  ensureCors(_req, res, () => {
+    res.status(statusCode).json({ error: message });
+  });
 }
