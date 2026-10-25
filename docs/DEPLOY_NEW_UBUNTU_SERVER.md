@@ -247,7 +247,38 @@ Redeploy Vercel.
 
 ---
 
-## 10. Checklist
+## 10. Seed first HR (PeopleFlow) login
+
+Site **`/admin/login`** and HR **`/hr/login`** are different systems.
+
+**Option A — script (recommended on server):**
+
+```bash
+cd /var/www/zentroverse-backend
+npm run seed:hr-admin
+```
+
+Default credentials (override with `SEED_HR_*` in `.env`):
+
+| Field | Default |
+|-------|---------|
+| URL | https://www.zentroverse.com/hr/login |
+| Email | `hr.admin@zentroverse.in` |
+| Password | `Zentro@2026` |
+
+**Option B — register in browser:** https://www.zentroverse.com/hr/register (requires `ALLOW_PUBLIC_REGISTER=true`).
+
+**Option C — API:**
+
+```bash
+curl -s -X POST "https://newbackend.zentroverse.com/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"HR Admin","email":"you@company.com","password":"YourPass123","organizationName":"My Company"}'
+```
+
+---
+
+## 11. Checklist
 
 - [ ] DNS **A** record `newbackend` → new server IP  
 - [ ] `dig newbackend.zentroverse.com` resolves correctly  
