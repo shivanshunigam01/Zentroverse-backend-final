@@ -7,6 +7,7 @@
     "postinstall": "npm run hr:install && node scripts/verify-peopleflow.mjs --soft",
     "verify:peopleflow": "node scripts/verify-peopleflow.mjs",
     "seed:hr-admin": "node scripts/seed-peopleflow-admin.mjs",
+    "seed:hr-demo": "node scripts/seed-peopleflow-demo.mjs",
     "predev": "npm run hr:build",
     "dev": "node --watch src/server.js",
     "prestart": "npm run hr:build",

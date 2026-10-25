@@ -247,7 +247,9 @@ Redeploy Vercel.
 
 ---
 
-## 10. Seed first HR (PeopleFlow) login
+## 10. Seed HR (PeopleFlow) login & demo data
+
+### Admin login
 
 Site **`/admin/login`** and HR **`/hr/login`** are different systems.
 
@@ -275,6 +277,34 @@ curl -s -X POST "https://newbackend.zentroverse.com/api/v1/auth/register" \
   -H "Content-Type: application/json" \
   -d '{"name":"HR Admin","email":"you@company.com","password":"YourPass123","organizationName":"My Company"}'
 ```
+
+### Demo data (all HR modules)
+
+After admin exists, seed sample departments, employees, leave, attendance, clients, mandates, candidates, interviews, offers, etc.:
+
+```bash
+cd /var/www/zentroverse-backend
+git pull origin master
+npm run seed:hr-demo
+```
+
+Optional — wipe org HR data and re-seed (keeps super-admin):
+
+```bash
+SEED_HR_DEMO_RESET=1 npm run seed:hr-demo
+```
+
+Demo logins (password `Zentro@2026` unless `SEED_HR_DEMO_PASSWORD` is set):
+
+| Role | Email |
+|------|--------|
+| SUPER_ADMIN | `hr.admin@zentroverse.in` |
+| MANAGER | `manager.demo@zentroverse.in` |
+| HR_ADMIN | `hr.ops@zentroverse.in` |
+| EMPLOYEE | `priya.employee@zentroverse.in` |
+| EMPLOYEE | `amit.employee@zentroverse.in` |
+
+No PM2 restart needed for seeding (MongoDB only).
 
 ---
 
