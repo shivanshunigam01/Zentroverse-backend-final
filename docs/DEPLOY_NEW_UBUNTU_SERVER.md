@@ -1,60 +1,64 @@
-# Deploy `Zentroverse-backend-final` on a new Ubuntu server
+# Deploy Zentroverse-backend-final on a new Ubuntu server
 
-Example public API URL: **`https://backend.zentros.com`**  
-GitHub: **`https://github.com/shivanshunigam01/Zentroverse-backend-final`**
-
-Replace `backend.zentros.com` with your real subdomain everywhere below.
+Example public API URL: **`https://newbackend.zentroverse.com`**  
+Repo: `https://github.com/shivanshunigam01/Zentroverse-backend-final`
 
 ---
 
-## 1. DNS (at your domain registrar / Cloudflare / Route53)
+## 1. DNS (at your domain registrar or Cloudflare)
 
-You want **`backend.zentros.com`** → your new server’s **public IPv4**.
+You want **`newbackend.zentroverse.com`** → your **new server’s public IPv4**.
 
-| Record type | Name / host | Value | TTL | When to use |
-|-------------|-------------|-------|-----|-------------|
-| **A** | `backend` | `YOUR_SERVER_PUBLIC_IP` (e.g. `3.110.x.x`) | 300–3600 | **Recommended** — points subdomain straight to the VPS/EC2 IP |
-| **AAAA** | `backend` | `YOUR_SERVER_IPV6` | optional | Only if the server has stable IPv6 |
-| **CNAME** | `backend` | `another-hostname.example.com` | 300 | Use if you point to a **load balancer**, Cloudflare proxy hostname, or another DNS name — **not** raw IP |
-| **TXT** | `_acme-challenge.backend` | (from Certbot) | auto | **Let’s Encrypt DNS challenge only** — not for normal API traffic |
+| Type | Name / Host | Value | When to use |
+|------|-------------|-------|-------------|
+| **A** | `newbackend` | `YOUR.SERVER.PUBLIC.IP` | **Use this** for a VPS/EC2 with a fixed IP |
+| **AAAA** | `newbackend` | `your:ipv6:...` | Optional, only if the server has IPv6 |
+| **CNAME** | `newbackend` | another **hostname** | Only if you point to a load balancer / CDN hostname — **not** for a raw IP |
+| **TXT** | — | — | **Not required** for API hosting (used for email/verification) |
 
-**Do not** use TXT for routing the API. Browsers and apps use **A** or **CNAME**.
+**Registrar UI examples**
 
-### Cloudflare tip
-- **DNS only (grey cloud)** while testing, or ensure SSL mode **Full (strict)** with a valid cert on nginx.
-- After DNS propagates: `dig +short backend.zentros.com` should show your IP.
+- **Name:** `newbackend` (some panels want the full `newbackend.zentroverse.com`)
+- **TTL:** 300–3600 seconds
+- **Proxy:** If using **Cloudflare**, turn **DNS only** (grey cloud) until Certbot works, or use Cloudflare’s SSL + origin cert
 
-### MongoDB Atlas (required)
-Atlas → **Network Access** → add **this server’s public IP** (or your office IP while testing).
+Wait 5–30 minutes, then check:
+
+```bash
+dig +short newbackend.zentroverse.com
+# should print YOUR.SERVER.PUBLIC.IP
+```
 
 ---
 
 ## 2. New Ubuntu server — base packages
 
-SSH as `ubuntu` (or your user):
+SSH as `ubuntu` (or `root`), then:
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y git curl nginx ufw
-```
 
-### Node.js 20 LTS
+sudo apt install -y git curl nginx certbot python3-certbot-nginx ufw
 
-```bash
+# Node.js 20 LTS (NodeSource)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
+
 node -v   # v20.x
 npm -v
 ```
 
-### PM2 (process manager)
+Optional swap (helps `npm install` / small instances):
 
 ```bash
-sudo npm install -g pm2
-pm2 -v
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ```
 
-### Firewall
+Firewall:
 
 ```bash
 sudo ufw allow OpenSSH
@@ -63,123 +67,118 @@ sudo ufw enable
 sudo ufw status
 ```
 
-App listens on **8787** only on **localhost**; nginx handles **443** publicly.
-
 ---
 
 ## 3. Clone from GitHub
 
 ```bash
 sudo mkdir -p /var/www
-sudo chown -R "$USER:$USER" /var/www
+sudo chown -R $USER:$USER /var/www
 cd /var/www
 
 git clone https://github.com/shivanshunigam01/Zentroverse-backend-final.git zentroverse-backend
-cd /var/www/zentroverse-backend
-git checkout master
+cd zentroverse-backend
 ```
 
-Private repo: use deploy key or `git clone git@github.com:shivanshunigam01/Zentroverse-backend-final.git`.
-
----
-
-## 4. Environment file (never commit)
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-**Production minimum:**
-
-```env
-NODE_ENV=production
-PORT=8787
-
-MONGODB_URI=mongodb+srv://USER:URL_ENCODED_PASSWORD@cluster.mongodb.net/zentroverse?retryWrites=true&w=majority
-USE_MEMORY_DB=false
-
-CORS_ORIGIN=https://www.zentroverse.com,https://zentroverse.com,https://backend.zentros.com,http://localhost:8080
-
-JWT_SECRET=long-random-string-min-32-chars
-JWT_ACCESS_SECRET=long-random-access-secret-min-32-chars
-JWT_REFRESH_SECRET=long-random-refresh-secret-min-32-chars
-
-PEOPLEFLOW_APP_URL=https://www.zentroverse.com
-ALLOW_PUBLIC_REGISTER=true
-
-ADMIN_EMAIL=admin@zentroverse.in
-ADMIN_PASSWORD=your-admin-password
-ADMIN_PANEL_TOKEN=your-admin-token
-
-# Cloudinary / Razorpay as needed
-```
-
-Test Mongo from the server:
-
-```bash
-node -e "import dotenv from 'dotenv'; import mongoose from 'mongoose'; dotenv.config(); mongoose.connect(process.env.MONGODB_URI).then(()=>{console.log('Mongo OK', mongoose.connection.host); process.exit(0)}).catch(e=>{console.error(e.message); process.exit(1)})"
-```
-
----
-
-## 5. Install dependencies & verify HR bundle
-
-`hr/dist` is **in the repo** — you do **not** need `npm run hr:build` on a small VPS.
+Deploy updates later:
 
 ```bash
 cd /var/www/zentroverse-backend
-npm install
-npm run verify:peopleflow
-```
-
-If verify fails: `git fetch origin master && git reset --hard origin/master && npm install`.
-
-**Do not** use `npm start` on the server (`prestart` runs `hr:build` and may OOM). Use PM2 + `node src/server.js` via ecosystem file.
-
----
-
-## 6. PM2
-
-```bash
-cd /var/www/zentroverse-backend
-pm2 start ecosystem.config.cjs
-pm2 save
-pm2 startup
-# Run the command PM2 prints (sudo env PATH=... pm2 startup systemd -u ubuntu --hp /home/ubuntu)
-```
-
-Check:
-
-```bash
-pm2 status
-pm2 logs zentroverse-api --lines 30
-curl -s http://127.0.0.1:8787/health
-curl -s http://127.0.0.1:8787/api/v1/health
-```
-
-Expect JSON with `"peopleflow": true` and PeopleFlow health on `/api/v1/health`.
-
-One-shot deploy later:
-
-```bash
 bash scripts/ec2-deploy-hr.sh
 ```
 
 ---
 
-## 7. Nginx reverse proxy
+## 4. Production `.env`
 
 ```bash
-sudo nano /etc/nginx/sites-available/backend.zentros.com
+cd /var/www/zentroverse-backend
+cp .env.example .env
+nano .env
 ```
 
-Paste (adjust `server_name`):
+Minimum for production:
+
+```env
+NODE_ENV=production
+PORT=8787
+
+MONGODB_URI=mongodb+srv://USER:YOUR_PASSWORD@cluster.mongodb.net/zentroverse?retryWrites=true&w=majority
+USE_MEMORY_DB=false
+
+CORS_ORIGIN=https://www.zentroverse.com,https://zentroverse.com,https://newbackend.zentroverse.com
+
+ADMIN_EMAIL=admin@zentroverse.in
+ADMIN_PASSWORD=your-admin-password
+ADMIN_PANEL_TOKEN=your-long-admin-token
+JWT_SECRET=your-long-jwt-secret-min-32-chars
+
+JWT_ACCESS_SECRET=your-peopleflow-access-secret-min-32-chars
+JWT_REFRESH_SECRET=your-peopleflow-refresh-secret-min-32-chars
+PEOPLEFLOW_APP_URL=https://www.zentroverse.com
+ALLOW_PUBLIC_REGISTER=true
+
+# Cloudinary / Razorpay — copy from old server if needed
+```
+
+**Atlas:** MongoDB Atlas → **Network Access** → add this server’s **public IP** (or temporary `0.0.0.0/0` while testing).
+
+Install dependencies (includes `hr/node_modules` via postinstall):
+
+```bash
+npm install
+npm run verify:peopleflow
+```
+
+Test API locally (Ctrl+C to stop):
+
+```bash
+node src/server.js
+# expect: Zentroverse API running on port 8787
+curl -s http://127.0.0.1:8787/health
+curl -s http://127.0.0.1:8787/api/v1/health
+```
+
+---
+
+## 5. PM2 (process manager)
+
+```bash
+sudo npm install -g pm2
+
+cd /var/www/zentroverse-backend
+pm2 start ecosystem.config.cjs
+pm2 save
+pm2 startup
+# run the command PM2 prints (sudo env PATH=...)
+```
+
+Useful commands:
+
+```bash
+pm2 status
+pm2 logs zentroverse-api --lines 50
+pm2 restart zentroverse-api
+bash scripts/diagnose-502.sh
+```
+
+**Do not** use `pm2 start npm -- start` on small servers — `prestart` runs `hr:build` and may OOM. Use **`ecosystem.config.cjs`** (`node src/server.js`).
+
+---
+
+## 6. Nginx reverse proxy
+
+```bash
+sudo nano /etc/nginx/sites-available/newbackend.zentroverse.com
+```
+
+Paste (HTTP first — Certbot adds HTTPS):
 
 ```nginx
 server {
     listen 80;
-    server_name backend.zentros.com;
+    listen [::]:80;
+    server_name newbackend.zentroverse.com;
 
     client_max_body_size 25m;
 
@@ -199,84 +198,76 @@ server {
 Enable site:
 
 ```bash
-sudo ln -sf /etc/nginx/sites-available/backend.zentros.com /etc/nginx/sites-enabled/
+sudo ln -sf /etc/nginx/sites-available/newbackend.zentroverse.com /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-Test HTTP: `curl -s http://backend.zentros.com/health`
+---
+
+## 7. Certbot (HTTPS / SSL)
+
+```bash
+sudo certbot --nginx -d newbackend.zentroverse.com
+```
+
+Follow prompts (email, agree, redirect HTTP → HTTPS recommended).
+
+Renewal is automatic; test with:
+
+```bash
+sudo certbot renew --dry-run
+```
 
 ---
 
-## 8. SSL with Certbot (Let’s Encrypt)
+## 8. Verify public API
 
 ```bash
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d backend.zentros.com
+curl -s https://newbackend.zentroverse.com/health
+curl -s https://newbackend.zentroverse.com/api/v1/health
 ```
 
-Follow prompts (email, agree, redirect HTTP→HTTPS optional but recommended).
-
-Renewal is automatic. Test: `sudo certbot renew --dry-run`
+Expect JSON with `"service":"zentroverse-api"` and `"peopleflow":true`.
 
 ---
 
 ## 9. Point the frontend to the new API
 
-After **`https://backend.zentros.com/health`** works:
+After the new backend works, update **create-space** (Vercel):
 
-### Vercel (`create-space`)
+| Variable | Example |
+|----------|---------|
+| `VITE_API_BASE_URL` | `https://newbackend.zentroverse.com` |
+| `VITE_HR_API_URL` | `/api/v1` (if using Vercel proxy) **or** `https://newbackend.zentroverse.com/api/v1` |
 
-Update **`vercel.json`** (or Vercel env vars):
+In `vercel.json` rewrites, change destination host from `backend.zentrosure.com` to `newbackend.zentroverse.com` if you proxy `/api/v1`.
 
-- `VITE_API_BASE_URL` → `https://backend.zentros.com`
-- Vercel rewrites for `/api/v1` and `/api/hr` → `https://backend.zentros.com/api/v1/...`
-
-Redeploy the frontend.
-
-### CORS
-
-Ensure new API URL is in server `.env`:
-
-`CORS_ORIGIN=...,https://backend.zentros.com`
-
-Restart API: `pm2 restart zentroverse-api`
+Redeploy Vercel.
 
 ---
 
-## 10. Smoke tests
+## 10. Checklist
 
-```bash
-curl -s https://backend.zentros.com/health
-curl -s https://backend.zentros.com/api/v1/health
-curl -sI -X OPTIONS "https://backend.zentros.com/api/v1/auth/login" \
-  -H "Origin: https://www.zentroverse.com" \
-  -H "Access-Control-Request-Method: POST"
-```
-
-Browser: `https://www.zentroverse.com/hr/register` then `/hr/login`.
-
----
-
-## 11. Troubleshooting
-
-| Symptom | Command / fix |
-|---------|----------------|
-| **502 Bad Gateway** | `bash scripts/diagnose-502.sh` — Node not on 8787 |
-| **peopleflow: false** | `npm run verify:peopleflow`; `git reset --hard origin/master` |
-| **Mongo auth failed** | Fix `MONGODB_URI`; Atlas IP allowlist |
-| **PM2 restart loop** | `pm2 logs zentroverse-api`; run `node src/server.js` in foreground |
-| **502 after deploy** | `pm2 restart zentroverse-api`; `sudo nginx -t` |
+- [ ] DNS **A** record `newbackend` → new server IP  
+- [ ] `dig newbackend.zentroverse.com` resolves correctly  
+- [ ] `.env` on server with valid `MONGODB_URI`  
+- [ ] Atlas allows server IP  
+- [ ] `npm install` + `verify:peopleflow` OK  
+- [ ] `pm2 status` → `zentroverse-api` online  
+- [ ] `curl 127.0.0.1:8787/health` OK  
+- [ ] Nginx + Certbot → `https://newbackend.zentroverse.com/health` OK  
+- [ ] Frontend env updated + redeploy  
 
 ---
 
-## Quick reference
+## Troubleshooting
 
-| Item | Value |
-|------|--------|
-| App directory | `/var/www/zentroverse-backend` |
-| Internal port | `8787` (localhost only) |
-| PM2 app name | `zentroverse-api` |
-| Public URL | `https://backend.zentros.com` |
-| HR API | `https://backend.zentros.com/api/v1` |
-| Legacy HR alias | `https://backend.zentros.com/api/hr` |
+| Symptom | Action |
+|---------|--------|
+| **502 Bad Gateway** | Node down — `pm2 logs zentroverse-api`, `bash scripts/diagnose-502.sh` |
+| **404 on /api/v1** | `peopleflow: false` — `git reset --hard origin/master`, `npm install`, restart PM2 |
+| **Mongo bad auth** | Fix password in `.env`, URL-encode special chars in URI |
+| **Certbot fails** | DNS not propagated; disable Cloudflare proxy temporarily |
+
+See also: `DEPLOY_LIVE.md`, `scripts/ec2-deploy-hr.sh`.

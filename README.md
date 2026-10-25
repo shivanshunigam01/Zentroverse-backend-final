@@ -23,9 +23,9 @@ npm run dev
 PeopleFlow full HR SaaS API: **`GET /api/v1/health`** (built from `hr/` on `predev` / `prestart`).
 Legacy slim **`/api/hr`** routes were removed — use **`/api/v1`** from the frontend.
 
-### New Ubuntu server (full guide)
+### New Ubuntu server + subdomain (e.g. `newbackend.zentroverse.com`)
 
-See **[docs/DEPLOY_NEW_UBUNTU_SERVER.md](docs/DEPLOY_NEW_UBUNTU_SERVER.md)** — DNS (A/CNAME), GitHub clone, PM2, Nginx, Certbot, `backend.zentros.com` example.
+Full guide: **[docs/DEPLOY_NEW_UBUNTU_SERVER.md](docs/DEPLOY_NEW_UBUNTU_SERVER.md)** (DNS A record, GitHub, PM2, Nginx, Certbot).
 
 ### Production deploy (PM2 / EC2)
 
