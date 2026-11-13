@@ -18,6 +18,8 @@ export declare function toPublicConsent(doc: Record<string, unknown>): {
         status: string;
     } | null;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentDate: string;
     consentMethod: "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentMethodLabel: string;
@@ -62,6 +64,8 @@ export declare function listConsents(auth: AuthContext, query: ConsentListQueryI
             status: string;
         } | null;
         consentGiven: boolean;
+        consentStatement: string;
+        candidateConfirmed: boolean;
         consentDate: string;
         consentMethod: "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
         consentMethodLabel: string;
@@ -102,6 +106,8 @@ export declare function getConsent(auth: AuthContext, id: string): Promise<{
         status: string;
     } | null;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentDate: string;
     consentMethod: "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentMethodLabel: string;
@@ -141,6 +147,8 @@ export declare function createConsent(auth: AuthContext, input: CreateConsentInp
         status: string;
     } | null;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentDate: string;
     consentMethod: "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentMethodLabel: string;
@@ -180,6 +188,8 @@ export declare function updateConsent(auth: AuthContext, id: string, input: Upda
         status: string;
     } | null;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentDate: string;
     consentMethod: "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentMethodLabel: string;

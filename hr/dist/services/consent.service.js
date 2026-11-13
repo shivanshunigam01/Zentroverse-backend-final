@@ -125,6 +125,8 @@ export function toPublicConsent(doc) {
         mandateId: mandate?.id ?? asId(doc.mandateId),
         mandate,
         consentGiven,
+        consentStatement: String(doc.consentStatement ?? ""),
+        candidateConfirmed: Boolean(doc.candidateConfirmed),
         consentDate: dateKeyOf(doc.consentDate),
         consentMethod: method,
         consentMethodLabel: CANDIDATE_CONSENT_METHOD_LABELS[method] ?? method,
@@ -239,6 +241,8 @@ export async function createConsent(auth, input) {
             candidateId: candidate._id,
             mandateId: mandate._id,
             consentGiven,
+            consentStatement: input.consentStatement ?? "",
+            candidateConfirmed: input.candidateConfirmed ?? false,
             consentDate,
             consentMethod: input.consentMethod ?? "FORM",
             consentPurpose: input.consentPurpose ?? "SOURCING",
@@ -286,6 +290,10 @@ export async function updateConsent(auth, id, input) {
         consent.consentMethod = input.consentMethod;
     if (input.consentPurpose !== undefined)
         consent.consentPurpose = input.consentPurpose;
+    if (input.consentStatement !== undefined)
+        consent.consentStatement = input.consentStatement;
+    if (input.candidateConfirmed !== undefined)
+        consent.candidateConfirmed = input.candidateConfirmed;
     if (input.consentDocument !== undefined) {
         consent.set("consentDocument", documentOf(input.consentDocument));
     }

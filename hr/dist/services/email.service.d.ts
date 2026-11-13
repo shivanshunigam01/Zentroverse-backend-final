@@ -4,6 +4,7 @@ export type SendEmailInput = {
     text: string;
     html?: string;
 };
+export declare function smtpConfigured(): boolean;
 export declare function sendEmail(input: SendEmailInput): Promise<boolean>;
 export declare function buildInterviewInvitationEmail(input: {
     candidateName: string;

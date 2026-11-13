@@ -9,7 +9,7 @@ export type SendEmailInput = {
   html?: string
 }
 
-function smtpConfigured() {
+export function smtpConfigured() {
   return Boolean(env.SMTP_HOST && env.SMTP_FROM)
 }
 

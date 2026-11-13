@@ -38,6 +38,8 @@ const candidateConsentSchema = new Schema(
       default: true,
       index: true,
     },
+    consentStatement: { type: String, trim: true, maxlength: 2000, default: "" },
+    candidateConfirmed: { type: Boolean, default: false },
     consentDate: {
       type: Date,
       default: null,

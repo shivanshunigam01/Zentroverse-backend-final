@@ -39,6 +39,14 @@ export declare const createClientSchema: z.ZodObject<{
         PENDING: "PENDING";
         VERIFIED: "VERIFIED";
     }>>;
+    invoiceSubmissionProcess: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    purchaseOrderRequired: z.ZodOptional<z.ZodBoolean>;
+    vendorCode: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    paymentCycleDays: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
+    authorizedSignatory: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    escalationContact: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    termsApproved: z.ZodOptional<z.ZodBoolean>;
+    termsApprovedAt: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>;
     notes: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
 }, z.core.$strip>;
 export declare const updateClientSchema: z.ZodObject<{
@@ -75,6 +83,14 @@ export declare const updateClientSchema: z.ZodObject<{
         PENDING: "PENDING";
         VERIFIED: "VERIFIED";
     }>>>;
+    invoiceSubmissionProcess: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
+    purchaseOrderRequired: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    vendorCode: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
+    paymentCycleDays: z.ZodOptional<z.ZodOptional<z.ZodCoercedNumber<unknown>>>;
+    authorizedSignatory: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
+    escalationContact: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
+    termsApproved: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    termsApprovedAt: z.ZodOptional<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>>;
     notes: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
 }, z.core.$strip>;
 export declare const clientListQuerySchema: z.ZodObject<{

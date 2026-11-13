@@ -3,6 +3,8 @@ export declare const createConsentSchema: z.ZodObject<{
     candidateId: z.ZodString;
     mandateId: z.ZodString;
     consentGiven: z.ZodOptional<z.ZodBoolean>;
+    consentStatement: z.ZodOptional<z.ZodString>;
+    candidateConfirmed: z.ZodOptional<z.ZodBoolean>;
     consentDate: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
     consentMethod: z.ZodOptional<z.ZodEnum<{
         OTHER: "OTHER";
@@ -35,6 +37,8 @@ export declare const updateConsentSchema: z.ZodObject<{
     candidateId: z.ZodOptional<z.ZodString>;
     mandateId: z.ZodOptional<z.ZodString>;
     consentGiven: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    consentStatement: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    candidateConfirmed: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
     consentDate: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>>;
     consentMethod: z.ZodOptional<z.ZodOptional<z.ZodEnum<{
         OTHER: "OTHER";
