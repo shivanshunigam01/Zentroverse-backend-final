@@ -1,6 +1,6 @@
 import nodemailer, {} from "nodemailer";
 import { env } from "../config/env.js";
-function smtpConfigured() {
+export function smtpConfigured() {
     return Boolean(env.SMTP_HOST && env.SMTP_FROM);
 }
 let transporter = null;

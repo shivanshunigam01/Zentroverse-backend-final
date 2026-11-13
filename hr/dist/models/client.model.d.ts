@@ -32,7 +32,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
 } & mongoose.DefaultTimestampProps, {}, {}, {
     id: string;
 }, mongoose.Document<unknown, {}, {
@@ -68,7 +76,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
 } & mongoose.DefaultTimestampProps, {
     id: string;
 }, {
@@ -106,7 +122,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
 } & {
@@ -148,7 +172,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
     city: string;
     state: string;
@@ -182,7 +214,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
 } & mongoose.DefaultTimestampProps, {
     id: string;
 }, Omit<mongoose.DefaultSchemaOptions, "timestamps"> & {
@@ -220,7 +260,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
 } & {
@@ -260,7 +308,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
     createdAt: NativeDate;
     updatedAt: NativeDate;
 } & {
@@ -300,7 +356,15 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
     notes: string;
+    termsApprovedAt?: NativeDate | null | undefined;
     createdAt: NativeDate;
     updatedAt: NativeDate;
 } & {

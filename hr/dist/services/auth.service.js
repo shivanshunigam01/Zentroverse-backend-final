@@ -10,6 +10,7 @@ import { getPermissionsForRole } from "../utils/access.js";
 import { createRandomToken, hashToken, tokensMatch } from "../utils/crypto.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { DUMMY_PASSWORD_HASH, verifyPassword } from "../utils/password.js";
+import { sendEmail, smtpConfigured } from "./email.service.js";
 function slugify(name) {
     const base = name
         .toLowerCase()
@@ -152,8 +153,22 @@ export async function forgotPassword(input) {
     user.passwordResetToken = hashToken(token);
     user.passwordResetExpires = new Date(Date.now() + RESET_TOKEN_TTL_MS);
     await user.save({ validateBeforeSave: false });
-    if (isDevelopment) {
-        console.info(`[auth] Password reset link for ${email}: ${env.APP_URL}/reset-password?token=${token}`);
+    const resetUrl = `${env.APP_URL.replace(/\/$/, "")}/hr/reset-password?token=${encodeURIComponent(token)}`;
+    if (!smtpConfigured()) {
+        if (isDevelopment) {
+            console.info(`[auth] Password reset link for ${email}: ${resetUrl}`);
+            return;
+        }
+        throw AppError.internal("Password reset email is not configured");
+    }
+    const sent = await sendEmail({
+        to: email,
+        subject: "Reset your PeopleFlow password",
+        text: `Hi ${user.name},\n\nUse this link to reset your PeopleFlow password. It expires in 1 hour:\n${resetUrl}\n\nIf you did not request this, you can ignore this email.`,
+        html: `<p>Hi ${user.name},</p><p>Use the link below to reset your PeopleFlow password. It expires in 1 hour.</p><p><a href="${resetUrl}">Reset password</a></p><p>If you did not request this, you can ignore this email.</p>`,
+    });
+    if (!sent) {
+        throw AppError.internal("Could not send password reset email");
     }
 }
 export async function resetPassword(input) {

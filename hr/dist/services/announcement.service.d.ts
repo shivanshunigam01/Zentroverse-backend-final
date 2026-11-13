@@ -25,7 +25,7 @@ export declare function listAnnouncements(auth: AuthContext, query: Announcement
         targetAudience: UserRole[];
         audienceLabel: string;
         isPublished: boolean;
-        visibility: "draft" | "expired" | "scheduled" | "live";
+        visibility: "scheduled" | "draft" | "expired" | "live";
         createdAt: string;
         updatedAt: string;
     }[];
@@ -48,7 +48,7 @@ export declare function listAnnouncements(auth: AuthContext, query: Announcement
         targetAudience: UserRole[];
         audienceLabel: string;
         isPublished: boolean;
-        visibility: "draft" | "expired" | "scheduled" | "live";
+        visibility: "scheduled" | "draft" | "expired" | "live";
         createdAt: string;
         updatedAt: string;
     } | null;
@@ -78,7 +78,7 @@ export declare function getAnnouncement(auth: AuthContext, id: string): Promise<
     targetAudience: UserRole[];
     audienceLabel: string;
     isPublished: boolean;
-    visibility: "draft" | "expired" | "scheduled" | "live";
+    visibility: "scheduled" | "draft" | "expired" | "live";
     createdAt: string;
     updatedAt: string;
 }>;
@@ -101,7 +101,7 @@ export declare function createAnnouncement(auth: AuthContext, input: Announcemen
     targetAudience: UserRole[];
     audienceLabel: string;
     isPublished: boolean;
-    visibility: "draft" | "expired" | "scheduled" | "live";
+    visibility: "scheduled" | "draft" | "expired" | "live";
     createdAt: string;
     updatedAt: string;
 }>;
@@ -124,7 +124,7 @@ export declare function updateAnnouncement(auth: AuthContext, id: string, input:
     targetAudience: UserRole[];
     audienceLabel: string;
     isPublished: boolean;
-    visibility: "draft" | "expired" | "scheduled" | "live";
+    visibility: "scheduled" | "draft" | "expired" | "live";
     createdAt: string;
     updatedAt: string;
 }>;
@@ -147,7 +147,7 @@ export declare function publishAnnouncement(auth: AuthContext, id: string): Prom
     targetAudience: UserRole[];
     audienceLabel: string;
     isPublished: boolean;
-    visibility: "draft" | "expired" | "scheduled" | "live";
+    visibility: "scheduled" | "draft" | "expired" | "live";
     createdAt: string;
     updatedAt: string;
 }>;
@@ -170,7 +170,7 @@ export declare function unpublishAnnouncement(auth: AuthContext, id: string): Pr
     targetAudience: UserRole[];
     audienceLabel: string;
     isPublished: boolean;
-    visibility: "draft" | "expired" | "scheduled" | "live";
+    visibility: "scheduled" | "draft" | "expired" | "live";
     createdAt: string;
     updatedAt: string;
 }>;

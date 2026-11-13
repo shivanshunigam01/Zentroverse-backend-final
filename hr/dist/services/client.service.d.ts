@@ -27,6 +27,14 @@ export declare function toPublicClient(doc: Record<string, unknown>): {
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
+    termsApprovedAt: string;
     notes: string;
     createdBy: {
         id: string;
@@ -68,6 +76,14 @@ export declare function listClients(auth: AuthContext, query: ClientListQueryInp
         onboardingStatusLabel: string;
         KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
         KYCStatusLabel: string;
+        invoiceSubmissionProcess: string;
+        purchaseOrderRequired: boolean;
+        vendorCode: string;
+        paymentCycleDays: number;
+        authorizedSignatory: string;
+        escalationContact: string;
+        termsApproved: boolean;
+        termsApprovedAt: string;
         notes: string;
         createdBy: {
             id: string;
@@ -105,6 +121,14 @@ export declare function getClient(auth: AuthContext, id: string): Promise<{
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
+    termsApprovedAt: string;
     notes: string;
     createdBy: {
         id: string;
@@ -141,6 +165,14 @@ export declare function createClient(auth: AuthContext, input: CreateClientInput
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
+    termsApprovedAt: string;
     notes: string;
     createdBy: {
         id: string;
@@ -177,6 +209,14 @@ export declare function updateClient(auth: AuthContext, id: string, input: Updat
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    invoiceSubmissionProcess: string;
+    purchaseOrderRequired: boolean;
+    vendorCode: string;
+    paymentCycleDays: number;
+    authorizedSignatory: string;
+    escalationContact: string;
+    termsApproved: boolean;
+    termsApprovedAt: string;
     notes: string;
     createdBy: {
         id: string;

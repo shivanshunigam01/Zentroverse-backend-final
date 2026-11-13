@@ -30,6 +30,9 @@ function isoOf(value) {
         return new Date(value).toISOString();
     return "";
 }
+function dateFromKey(value) {
+    return value ? new Date(`${value}T00:00:00.000Z`) : null;
+}
 function toContactPerson(value) {
     if (!value || typeof value !== "object") {
         return null;
@@ -86,6 +89,14 @@ export function toPublicClient(doc) {
         onboardingStatusLabel: CLIENT_ONBOARDING_LABELS[onboardingStatus] ?? onboardingStatus,
         KYCStatus,
         KYCStatusLabel: CLIENT_KYC_LABELS[KYCStatus] ?? KYCStatus,
+        invoiceSubmissionProcess: String(doc.invoiceSubmissionProcess ?? ""),
+        purchaseOrderRequired: Boolean(doc.purchaseOrderRequired),
+        vendorCode: String(doc.vendorCode ?? ""),
+        paymentCycleDays: Number(doc.paymentCycleDays ?? 30),
+        authorizedSignatory: String(doc.authorizedSignatory ?? ""),
+        escalationContact: String(doc.escalationContact ?? ""),
+        termsApproved: Boolean(doc.termsApproved),
+        termsApprovedAt: isoOf(doc.termsApprovedAt),
         notes: String(doc.notes ?? ""),
         createdBy: toCreatedBy(doc.createdBy),
         createdAt: isoOf(doc.createdAt),
@@ -181,6 +192,16 @@ export async function createClient(auth, input) {
             status: input.status ?? "LEAD",
             onboardingStatus: input.onboardingStatus ?? "PENDING",
             KYCStatus: input.KYCStatus ?? "PENDING",
+            invoiceSubmissionProcess: input.invoiceSubmissionProcess ?? "",
+            purchaseOrderRequired: input.purchaseOrderRequired ?? false,
+            vendorCode: input.vendorCode ?? "",
+            paymentCycleDays: input.paymentCycleDays ?? 30,
+            authorizedSignatory: input.authorizedSignatory ?? "",
+            escalationContact: input.escalationContact ?? "",
+            termsApproved: input.termsApproved ?? false,
+            termsApprovedAt: input.termsApproved
+                ? (dateFromKey(input.termsApprovedAt) ?? new Date())
+                : null,
             notes: input.notes ?? "",
             createdBy: auth.userId,
         });
@@ -238,6 +259,27 @@ export async function updateClient(auth, id, input) {
         client.onboardingStatus = input.onboardingStatus;
     if (input.KYCStatus !== undefined)
         client.KYCStatus = input.KYCStatus;
+    if (input.invoiceSubmissionProcess !== undefined)
+        client.invoiceSubmissionProcess = input.invoiceSubmissionProcess ?? "";
+    if (input.purchaseOrderRequired !== undefined)
+        client.purchaseOrderRequired = input.purchaseOrderRequired;
+    if (input.vendorCode !== undefined)
+        client.vendorCode = input.vendorCode ?? "";
+    if (input.paymentCycleDays !== undefined)
+        client.paymentCycleDays = input.paymentCycleDays;
+    if (input.authorizedSignatory !== undefined)
+        client.authorizedSignatory = input.authorizedSignatory ?? "";
+    if (input.escalationContact !== undefined)
+        client.escalationContact = input.escalationContact ?? "";
+    if (input.termsApproved !== undefined) {
+        client.termsApproved = input.termsApproved;
+        client.termsApprovedAt = input.termsApproved
+            ? (dateFromKey(input.termsApprovedAt) ?? client.termsApprovedAt ?? new Date())
+            : null;
+    }
+    if (input.termsApprovedAt !== undefined && input.termsApproved) {
+        client.termsApprovedAt = dateFromKey(input.termsApprovedAt);
+    }
     if (input.notes !== undefined)
         client.notes = input.notes ?? "";
     try {

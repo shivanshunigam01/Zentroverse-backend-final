@@ -43,6 +43,14 @@ export const createClientSchema = z.object({
     status: z.enum(CLIENT_STATUSES).optional(),
     onboardingStatus: z.enum(CLIENT_ONBOARDING_STATUSES).optional(),
     KYCStatus: z.enum(CLIENT_KYC_STATUSES).optional(),
+    invoiceSubmissionProcess: optionalText(1000),
+    purchaseOrderRequired: z.boolean().optional(),
+    vendorCode: optionalText(100),
+    paymentCycleDays: z.coerce.number().int().min(0).max(365).optional(),
+    authorizedSignatory: optionalText(160),
+    escalationContact: optionalText(240),
+    termsApproved: z.boolean().optional(),
+    termsApprovedAt: z.union([z.string().date(), z.literal("")]).optional(),
     notes: optionalText(4000),
 });
 export const updateClientSchema = createClientSchema.partial();

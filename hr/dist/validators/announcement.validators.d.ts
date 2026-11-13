@@ -77,9 +77,9 @@ export declare const announcementListQuerySchema: z.ZodObject<{
         urgent: "urgent";
     }>>;
     visibility: z.ZodOptional<z.ZodEnum<{
+        scheduled: "scheduled";
         draft: "draft";
         expired: "expired";
-        scheduled: "scheduled";
         live: "live";
     }>>;
 }, z.core.$strip>;

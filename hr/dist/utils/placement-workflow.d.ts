@@ -54,7 +54,15 @@ export declare function assertSubmissionWorkflowReady(input: {
         }>;
         onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
         KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+        invoiceSubmissionProcess: string;
+        purchaseOrderRequired: boolean;
+        vendorCode: string;
+        paymentCycleDays: number;
+        authorizedSignatory: string;
+        escalationContact: string;
+        termsApproved: boolean;
         notes: string;
+        termsApprovedAt?: NativeDate | null | undefined;
     } & import("mongoose").DefaultTimestampProps, {
         id: string;
     }, {
@@ -92,7 +100,15 @@ export declare function assertSubmissionWorkflowReady(input: {
         }>;
         onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
         KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+        invoiceSubmissionProcess: string;
+        purchaseOrderRequired: boolean;
+        vendorCode: string;
+        paymentCycleDays: number;
+        authorizedSignatory: string;
+        escalationContact: string;
+        termsApproved: boolean;
         notes: string;
+        termsApprovedAt?: NativeDate | null | undefined;
     } & import("mongoose").DefaultTimestampProps & {
         _id: import("mongoose").Types.ObjectId;
     } & {
@@ -270,6 +286,8 @@ export declare function assertSubmissionWorkflowReady(input: {
         mandateId: import("mongoose").Types.ObjectId;
         createdBy: import("mongoose").Types.ObjectId;
         consentGiven: boolean;
+        consentStatement: string;
+        candidateConfirmed: boolean;
         consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
         consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
         expiryDate?: NativeDate | null | undefined;
@@ -289,6 +307,8 @@ export declare function assertSubmissionWorkflowReady(input: {
         mandateId: import("mongoose").Types.ObjectId;
         createdBy: import("mongoose").Types.ObjectId;
         consentGiven: boolean;
+        consentStatement: string;
+        candidateConfirmed: boolean;
         consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
         consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
         expiryDate?: NativeDate | null | undefined;

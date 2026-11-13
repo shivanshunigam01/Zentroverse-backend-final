@@ -5,6 +5,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -22,6 +24,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -41,6 +45,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -64,6 +70,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -79,6 +87,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -98,6 +108,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -119,6 +131,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
@@ -140,6 +154,8 @@ export declare const CandidateConsentModel: mongoose.Model<{
     mandateId: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
+    consentStatement: string;
+    candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
     expiryDate?: NativeDate | null | undefined;
