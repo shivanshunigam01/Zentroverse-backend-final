@@ -2,22 +2,6 @@
 
 export const worksDefaults = [
   {
-    id: "work-travelodeal",
-    title: "Travelodeal UK",
-    category: "Travel",
-    url: "https://www.travelodeal.co.uk/",
-    tech: ["Next.js", "React.js", "Node.js", "Express.js", "TypeScript", "REST APIs", "AWS", "DevOps"],
-    description:
-      "Travel-domain product for the UK market—holiday discovery, offers, and booking-oriented flows. Work spans the full stack and cloud delivery for a live production travel platform.",
-    features: [
-      "Travel & holiday-focused customer journeys",
-      "Modern React / Next.js frontend with scalable APIs",
-      "Cloud-hosted deployment and DevOps practices",
-      "Performance-oriented delivery for a public travel site",
-    ],
-    imageUrl: "",
-  },
-  {
     id: "work-punya",
     title: "Punya Autowheels Platform",
     category: "Automobile",
@@ -32,6 +16,22 @@ export const worksDefaults = [
       "Scalable backend APIs for handling user requests",
     ],
     imageUrl: "",
+  },
+  {
+    id: "work-hybajaj",
+    title: "HY Bajaj — Muzaffarpur",
+    category: "Automobile",
+    url: "https://www.hybajaj.com/",
+    tech: ["React.js", "Next.js", "Node.js", "SEO"],
+    description:
+      "Premium Bajaj motorcycle dealership website for Muzaffarpur — model line-up, Chetak EV, finance and test-ride flows with a conversion-focused rider experience and dealer branding.",
+    features: [
+      "Motorcycle & EV catalog with filtered model browsing",
+      "Test ride and call-to-action booking flows",
+      "Branch, finance and multi-category navigation",
+      "Performance-oriented responsive UI for mobile shoppers",
+    ],
+    imageUrl: "/images/works/hybajaj-hero.jpg",
   },
   {
     id: "work-vikramshila",
@@ -76,7 +76,7 @@ export const worksDefaults = [
     tech: ["Next.js", "React.js"],
     description: "Professional accounting services platform for an international client.",
     features: ["Minimal UI design", "Service-focused content", "SEO optimization", "Contact integration"],
-    imageUrl: "",
+    imageUrl: "/images/works/nanak-accountants-hero.png",
   },
   {
     id: "work-amarjyoti",
@@ -106,7 +106,7 @@ export const worksDefaults = [
     tech: ["React.js", "Node.js"],
     description: "Lead-generation platform for luxury transportation services.",
     features: ["Booking and inquiry system", "Service listings", "Mobile-optimized UI", "Conversion-focused layout"],
-    imageUrl: "",
+    imageUrl: "/images/works/luxury-bus-rental-hero.jpg",
   },
   {
     id: "work-derxo",
@@ -149,14 +149,36 @@ export const worksDefaults = [
     imageUrl: "",
   },
   {
-    id: "work-zentroverse",
-    title: "Zentroverse",
-    category: "Enterprise",
-    url: "https://www.zentroverse.com",
-    tech: ["React.js", "Node.js", "AWS", "DevOps"],
-    description: "Large-scale enterprise platform with multiple modules and role-based access.",
-    features: ["Multi-module architecture", "Role-based access", "Scalable backend", "API automation"],
-    imageUrl: "",
+    id: "work-twinklingz",
+    title: "Twinklingz by Priya Kaur",
+    category: "Retail",
+    url: "https://www.twinklingz.com/",
+    tech: ["React.js", "Next.js", "E-commerce", "SEO"],
+    description:
+      "Luxury jewellery e-commerce with category collections, festive campaigns and a premium shopping experience.",
+    features: [
+      "Category catalogue and bestsellers",
+      "Promotional sale banners",
+      "Cart and wishlist UX",
+      "Brand-led hero storytelling",
+    ],
+    imageUrl: "/images/works/twinklingz-hero.png",
+  },
+  {
+    id: "work-svr-laticare",
+    title: "SVR Hospital & Group",
+    category: "Healthcare",
+    url: "https://www.laticaresvrindia.com/",
+    tech: ["React.js", "Next.js", "Node.js", "SEO"],
+    description:
+      "Multi-initiative healthcare and group website for SVR Hospital, tile adhesive and SVR Trust — appointments, services and brand storytelling.",
+    features: [
+      "Hospital, trust and product initiatives",
+      "Appointment and emergency contacts",
+      "Hero-led brand experience",
+      "Responsive healthcare UI",
+    ],
+    imageUrl: "/images/works/svr-hospital-hero.png",
   },
   {
     id: "work-neuro-vihar",
@@ -166,16 +188,6 @@ export const worksDefaults = [
     tech: ["Next.js", "React.js"],
     description: "Modern healthcare interface focusing on usability, performance, and clean design.",
     features: ["Responsive UI", "Fast performance", "Clean interface", "Structured content delivery"],
-    imageUrl: "",
-  },
-  {
-    id: "work-dummy-test",
-    title: "Zentroverse Demo Portal (Test)",
-    category: "SaaS",
-    url: "https://www.zentroverse.com",
-    tech: ["React.js", "Node.js", "MongoDB", "Vite"],
-    description: "Dummy test project to verify Our Work CMS and /works page integration.",
-    features: ["CMS-driven cards", "Live screenshot fallback", "Admin publish", "Public /works grid"],
     imageUrl: "",
   },
 ];
