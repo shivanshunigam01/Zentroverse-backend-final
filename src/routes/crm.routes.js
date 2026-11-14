@@ -18,6 +18,7 @@ import {
   updateCustomer,
   updateInvoice,
   updateQuotation,
+  sendDocumentEmail,
 } from "../controllers/crm.controller.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
 
@@ -46,5 +47,6 @@ router.get("/receipts", listReceipts);
 router.get("/settings", getSettings);
 router.put("/settings", putSettings);
 router.post("/import", importCrm);
+router.post("/documents/send-email", sendDocumentEmail);
 
 export default router;

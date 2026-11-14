@@ -261,3 +261,13 @@ export async function importCrm(req, res, next) {
     next(e);
   }
 }
+
+/** Reserved for SMTP — returns 501 until LEAD/SMTP env is wired. */
+export async function sendDocumentEmail(_req, res) {
+  res.status(501).json({
+    ok: false,
+    error: "smtp_not_configured",
+    message:
+      "Server email is not configured yet. Set SMTP_* in .env (coming soon) or share via mailto/WhatsApp from the admin panel.",
+  });
+}
