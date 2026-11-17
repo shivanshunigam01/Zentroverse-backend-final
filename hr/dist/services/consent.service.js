@@ -126,6 +126,7 @@ export function toPublicConsent(doc) {
         mandate,
         consentGiven,
         consentStatement: String(doc.consentStatement ?? ""),
+        consentVersion: String(doc.consentVersion ?? ""),
         candidateConfirmed: Boolean(doc.candidateConfirmed),
         consentDate: dateKeyOf(doc.consentDate),
         consentMethod: method,
@@ -174,11 +175,14 @@ async function assertMandate(organizationId, mandateId) {
     return mandate;
 }
 async function syncCandidateConsentSnapshot(organizationId, candidateId) {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
     const latest = await CandidateConsentModel.findOne({
         organizationId,
         candidateId,
         consentGiven: true,
         withdrawnAt: null,
+        $or: [{ expiryDate: null }, { expiryDate: { $exists: false } }, { expiryDate: { $gte: today } }],
     })
         .sort({ consentDate: -1, createdAt: -1 })
         .select("consentDate consentMethod")
@@ -242,6 +246,7 @@ export async function createConsent(auth, input) {
             mandateId: mandate._id,
             consentGiven,
             consentStatement: input.consentStatement ?? "",
+            consentVersion: input.consentVersion ?? "",
             candidateConfirmed: input.candidateConfirmed ?? false,
             consentDate,
             consentMethod: input.consentMethod ?? "FORM",
@@ -292,6 +297,8 @@ export async function updateConsent(auth, id, input) {
         consent.consentPurpose = input.consentPurpose;
     if (input.consentStatement !== undefined)
         consent.consentStatement = input.consentStatement;
+    if (input.consentVersion !== undefined)
+        consent.consentVersion = input.consentVersion;
     if (input.candidateConfirmed !== undefined)
         consent.candidateConfirmed = input.candidateConfirmed;
     if (input.consentDocument !== undefined) {

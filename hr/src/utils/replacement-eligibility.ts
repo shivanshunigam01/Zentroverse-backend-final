@@ -40,10 +40,13 @@ export type ReplacementEligibilityInput = {
     restructuring?: boolean
     unsafeConditions?: boolean
     clientMisconduct?: boolean
+    otherClientCaused?: boolean
   }
   invoicePaidOnTime?: boolean | null
   freeReplacementsUsed?: number
   maxFreeReplacements?: number
+  agreementVerified?: boolean
+  guaranteeRecordMatches?: boolean
   /** Admin override skips hard blocks except logging */
   manualOverride?: boolean
 }
@@ -68,6 +71,7 @@ function hasExclusion(exclusions: ReplacementEligibilityInput["exclusions"]) {
   if (exclusions.restructuring) hits.push("Restructuring")
   if (exclusions.unsafeConditions) hits.push("Unsafe or unlawful working conditions")
   if (exclusions.clientMisconduct) hits.push("Client misconduct")
+  if (exclusions.otherClientCaused) hits.push("Other client-caused condition")
   return hits
 }
 
@@ -88,6 +92,13 @@ export function evaluateReplacementEligibility(
 
   if (!withinGuaranteePeriod) {
     reasons.push("Request is outside the replacement guarantee period")
+  }
+
+  if (input.agreementVerified === false) {
+    reasons.push("A valid executed agreement covering the request date could not be verified")
+  }
+  if (input.guaranteeRecordMatches === false) {
+    reasons.push("Guarantee tracking dates do not match the signed replacement terms")
   }
 
   if (!freeReplacementAvailable && !input.manualOverride) {
@@ -144,12 +155,14 @@ export function evaluateReplacementEligibility(
 
   if (
     input.invoicePaidOnTime === false ||
+    input.agreementVerified === false ||
+    input.guaranteeRecordMatches === false ||
     input.reason === "CLIENT_REQUEST" ||
     input.reason === "OTHER" ||
     input.invoicePaidOnTime === null ||
     input.invoicePaidOnTime === undefined
   ) {
-    if (!eligibleReasonSet.has(input.reason) || input.invoicePaidOnTime !== true) {
+    if (!eligibleReasonSet.has(input.reason) || input.invoicePaidOnTime !== true || input.agreementVerified !== true || input.guaranteeRecordMatches === false) {
       return {
         result: "REVIEW",
         reasons: reasons.length ? reasons : ["Requires manual review"],

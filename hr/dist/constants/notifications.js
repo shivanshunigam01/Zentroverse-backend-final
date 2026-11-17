@@ -4,6 +4,7 @@ export const NOTIFICATION_TYPES = [
     "announcement",
     "document",
     "payroll",
+    "recruitment",
     "system",
 ];
 //# sourceMappingURL=notifications.js.map

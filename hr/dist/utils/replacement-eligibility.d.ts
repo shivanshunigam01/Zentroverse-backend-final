@@ -19,10 +19,13 @@ export type ReplacementEligibilityInput = {
         restructuring?: boolean;
         unsafeConditions?: boolean;
         clientMisconduct?: boolean;
+        otherClientCaused?: boolean;
     };
     invoicePaidOnTime?: boolean | null;
     freeReplacementsUsed?: number;
     maxFreeReplacements?: number;
+    agreementVerified?: boolean;
+    guaranteeRecordMatches?: boolean;
     /** Admin override skips hard blocks except logging */
     manualOverride?: boolean;
 };

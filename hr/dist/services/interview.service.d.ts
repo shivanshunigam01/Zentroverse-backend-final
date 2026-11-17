@@ -49,6 +49,7 @@ export declare function toPublicInterview(doc: Record<string, unknown>): {
     decisionLabel: string;
     nextAction: string;
     nextActionDeadline: string;
+    feedbackDeadlineStatus: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -106,6 +107,7 @@ export declare function listInterviews(auth: AuthContext, query: InterviewListQu
         decisionLabel: string;
         nextAction: string;
         nextActionDeadline: string;
+        feedbackDeadlineStatus: string;
         createdAt: string;
         updatedAt: string;
     }[];
@@ -159,6 +161,7 @@ export declare function getInterview(auth: AuthContext, id: string): Promise<{
     decisionLabel: string;
     nextAction: string;
     nextActionDeadline: string;
+    feedbackDeadlineStatus: string;
     createdAt: string;
     updatedAt: string;
 }>;
@@ -211,6 +214,7 @@ export declare function createInterview(auth: AuthContext, input: CreateIntervie
     decisionLabel: string;
     nextAction: string;
     nextActionDeadline: string;
+    feedbackDeadlineStatus: string;
     createdAt: string;
     updatedAt: string;
 }>;
@@ -263,6 +267,7 @@ export declare function updateInterview(auth: AuthContext, id: string, input: Up
     decisionLabel: string;
     nextAction: string;
     nextActionDeadline: string;
+    feedbackDeadlineStatus: string;
     createdAt: string;
     updatedAt: string;
 }>;

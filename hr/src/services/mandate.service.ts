@@ -46,6 +46,7 @@ const MANDATE_POPULATE = [
   { path: "agreementId", select: "agreementNumber status" },
   { path: "assignedRecruiters", select: "name email role" },
   { path: "createdBy", select: "name email role" },
+  { path: "clientApproval.recordedBy", select: "name email role" },
 ] as const
 
 function asId(value: unknown) {
@@ -138,6 +139,9 @@ export function toPublicMandate(
   const mustHaveSkillsRaw = stringsOf(doc.mustHaveSkills)
   const mustHaveSkills = mustHaveSkillsRaw.length ? mustHaveSkillsRaw : skills
   const preferredSkills = stringsOf(doc.preferredSkills)
+  const approval = doc.clientApproval && typeof doc.clientApproval === "object"
+    ? doc.clientApproval as Record<string, unknown>
+    : {}
 
   return {
     id: String(doc._id ?? doc.id),
@@ -146,6 +150,16 @@ export function toPublicMandate(
     client,
     agreementId: agreement?.id ?? asId(doc.agreementId),
     agreement,
+    clientApproval: {
+      name: String(approval.name ?? ""),
+      title: String(approval.title ?? ""),
+      email: String(approval.email ?? ""),
+      typedName: String(approval.typedName ?? ""),
+      approvedAt: dateKeyOf(approval.approvedAt),
+      evidenceUrl: String(approval.evidenceUrl ?? ""),
+      consentConfirmed: Boolean(approval.consentConfirmed),
+      recordedBy: toUserRef(approval.recordedBy),
+    },
     mandateNumber: String(doc.mandateNumber ?? ""),
     position: String(doc.position ?? ""),
     department: String(doc.department ?? ""),
@@ -202,6 +216,26 @@ export function toPublicMandate(
     createdBy: toUserRef(doc.createdBy),
     createdAt: isoOf(doc.createdAt),
     updatedAt: isoOf(doc.updatedAt),
+  }
+}
+
+function assertClientApproval(approval: {
+  name?: string
+  email?: string
+  typedName?: string
+  approvedAt?: unknown
+  evidenceUrl?: string
+  consentConfirmed?: boolean
+}) {
+  const missing: string[] = []
+  if (!approval.name?.trim()) missing.push("client approver name")
+  if (!approval.email?.trim()) missing.push("client approver email")
+  if (!approval.approvedAt) missing.push("client approval date")
+  if (!approval.evidenceUrl?.trim()) missing.push("signed approval or written authorization link")
+  if (!approval.name?.trim() || approval.name.trim() !== approval.typedName?.trim()) missing.push("client approver typed signature")
+  if (!approval.consentConfirmed) missing.push("client approval confirmation")
+  if (missing.length) {
+    throw AppError.badRequest(`Record client sign-off before approving this mandate: ${missing.join(", ")}`)
   }
 }
 
@@ -341,11 +375,21 @@ async function createMandateDocument(auth: AuthContext, input: CreateMandateInpu
   const agreement = await assertAgreement(auth.organizationId, input.agreementId, String(client._id))
   const assignedRecruiters = await assertRecruiters(auth.organizationId, input.assignedRecruiters)
   const mandateNumber = await generateMandateNumber(auth.organizationId)
+  if (input.status === "APPROVED" || input.status === "OPEN") {
+    assertClientApproval(input.clientApproval ?? {})
+  }
 
   return RecruitmentMandateModel.create({
     organizationId: auth.organizationId,
     clientId: client._id,
     agreementId: agreement._id,
+    clientApproval: {
+      ...input.clientApproval,
+      approvedAt: input.clientApproval?.approvedAt
+        ? utcDateFromKey(input.clientApproval.approvedAt)
+        : null,
+      recordedBy: input.clientApproval?.consentConfirmed ? auth.userId : null,
+    },
     mandateNumber,
     createdBy: auth.userId,
     assignedRecruiters,
@@ -424,6 +468,7 @@ export async function createMandate(auth: AuthContext, input: CreateMandateInput
         status: publicMandate.status,
         mandateNumber: publicMandate.mandateNumber,
         position: publicMandate.position,
+        clientApproval: publicMandate.clientApproval,
       },
     })
   }
@@ -513,9 +558,24 @@ export async function updateMandate(auth: AuthContext, id: string, input: Update
   }
   if (input.priority !== undefined) mandate.priority = input.priority
   if (input.status !== undefined) mandate.status = input.status
+  if (input.clientApproval !== undefined) {
+    const existingApproval = ((mandate.toObject() as Record<string, unknown>).clientApproval ?? {}) as Record<string, unknown>
+    const mergedApproval: Record<string, unknown> = { ...existingApproval, ...input.clientApproval }
+    if (input.clientApproval.approvedAt !== undefined) {
+      mergedApproval.approvedAt = input.clientApproval.approvedAt
+        ? utcDateFromKey(input.clientApproval.approvedAt)
+        : null
+    }
+    if (input.clientApproval.consentConfirmed) mergedApproval.recordedBy = auth.userId
+    mandate.set("clientApproval", mergedApproval)
+  }
   if (input.isPublic !== undefined) mandate.isPublic = input.isPublic
 
   const nextStatus = String(mandate.status)
+  if (nextStatus === "APPROVED" || nextStatus === "OPEN") {
+    const approval = ((mandate.toObject() as Record<string, unknown>).clientApproval ?? {}) as Record<string, unknown>
+    assertClientApproval(approval as Parameters<typeof assertClientApproval>[0])
+  }
   if (mandate.isPublic && nextStatus === "OPEN" && !mandate.publishedAt) {
     mandate.publishedAt = new Date()
   }
@@ -525,20 +585,23 @@ export async function updateMandate(auth: AuthContext, id: string, input: Update
   await syncJobForMandate(mandate)
 
   const publicMandate = await withPublishedJob(mandate.toObject() as Record<string, unknown>)
-  if (input.status !== undefined && previousStatus !== publicMandate.status) {
+  const statusChanged = input.status !== undefined && previousStatus !== publicMandate.status
+  const approvalRecorded = input.clientApproval !== undefined
+  if (statusChanged || approvalRecorded) {
     const approvedNow =
       (publicMandate.status === "APPROVED" || publicMandate.status === "OPEN") &&
       previousStatus !== "APPROVED" &&
       previousStatus !== "OPEN"
     await recordAudit(auth, {
       module: "MANDATES",
-      action: approvedNow ? "APPROVED" : "STATUS_CHANGED",
+      action: approvedNow ? "APPROVED" : statusChanged ? "STATUS_CHANGED" : "UPDATED",
       recordId: publicMandate.id,
       previousData: { status: previousStatus },
       newData: {
         status: publicMandate.status,
         mandateNumber: publicMandate.mandateNumber,
         position: publicMandate.position,
+        clientApproval: publicMandate.clientApproval,
       },
     })
   }

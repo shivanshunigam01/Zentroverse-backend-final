@@ -1,6 +1,8 @@
 import { connectDatabase, disconnectDatabase } from "./config/db.js"
 import { env, isProduction } from "./config/env.js"
 import { createApp } from "./app.js"
+import { startInterviewFeedbackReminders } from "./jobs/interview-feedback-reminders.js"
+import { startPlacementReminders } from "./jobs/placement-reminders.js"
 
 const app = createApp()
 
@@ -8,6 +10,12 @@ const app = createApp()
 async function start() {
   try {
     await connectDatabase()
+    const feedbackReminderTimer = startInterviewFeedbackReminders()
+    const placementReminderTimer = startPlacementReminders()
+    process.on("SIGINT", () => clearInterval(feedbackReminderTimer))
+    process.on("SIGTERM", () => clearInterval(feedbackReminderTimer))
+    process.on("SIGINT", () => clearInterval(placementReminderTimer))
+    process.on("SIGTERM", () => clearInterval(placementReminderTimer))
   } catch (error) {
     console.error(`[${env.APP_NAME}] MongoDB connection failed`, error)
     if (isProduction) {

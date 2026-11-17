@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 export declare const NotificationModel: mongoose.Model<{
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -11,7 +11,7 @@ export declare const NotificationModel: mongoose.Model<{
 } & mongoose.DefaultTimestampProps, {}, {}, {
     id: string;
 }, mongoose.Document<unknown, {}, {
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -24,7 +24,7 @@ export declare const NotificationModel: mongoose.Model<{
 }, {
     timestamps: true;
 }> & Omit<{
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -41,7 +41,7 @@ export declare const NotificationModel: mongoose.Model<{
 }>, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any, any>, {}, {}, {}, {}, {
     timestamps: true;
 }, {
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -50,7 +50,7 @@ export declare const NotificationModel: mongoose.Model<{
     title: string;
     isRead: boolean;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -63,7 +63,7 @@ export declare const NotificationModel: mongoose.Model<{
 }, Omit<mongoose.DefaultSchemaOptions, "timestamps"> & {
     timestamps: true;
 }> & Omit<{
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -78,7 +78,7 @@ export declare const NotificationModel: mongoose.Model<{
 }, "id"> & mongoose.HydratedDocumentOverrides<{
     id: string;
 }>, unknown, {
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
@@ -93,7 +93,7 @@ export declare const NotificationModel: mongoose.Model<{
 } & {
     __v: number;
 }>, {
-    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "system";
+    type: "leave" | "attendance" | "announcement" | "document" | "payroll" | "recruitment" | "system";
     message: string;
     organizationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;

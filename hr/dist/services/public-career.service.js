@@ -21,6 +21,7 @@ import { applySearch, escapeRegex } from "../utils/search.js";
 import { triggerAiInterviewWorkflow } from "./ai-interview.service.js";
 import { buildInterviewLink } from "./email.service.js";
 const DEFAULT_TIMEZONE = "Asia/Kolkata";
+const CAREER_CONSENT_VERSION = "2026-11-v2";
 const MANDATE_POPULATE = [{ path: "clientId", select: "companyName industry" }];
 function asId(value) {
     if (!value)
@@ -47,6 +48,9 @@ function postedLabel(value) {
         return "";
     const key = dateKeyFromDate(value);
     return key ? formatShortDate(key) : "";
+}
+function careerConsentStatement(companyName, position) {
+    return `I consent to Zentroverse Global Private Limited collecting and using my application information and documents to assess me for the ${position || "advertised"} role at ${companyName || "the hiring company"}. I consent to Zentroverse sharing my profile with ${companyName || "the hiring company"} for this role and contacting me about this application. I have read the Privacy Policy and understand I can withdraw consent by emailing digital@zentroverse.com. This consent is limited to this application. Candidates are not required to pay any recruitment fee. Do not pay anyone claiming to guarantee selection or employment on Zentroverse's behalf.`;
 }
 export function toPublicCareerJob(doc) {
     const workMode = String(doc.workMode ?? "ONSITE");
@@ -240,7 +244,14 @@ async function upsertCareerCandidate(organizationId, input, resume) {
             existing.resumeFileName = resume.fileName;
             existing.resumePublicId = resume.publicId;
         }
-        existing.consent = { given: true, date: new Date(), method: "FORM" };
+        existing.consent = {
+            given: true,
+            date: new Date(),
+            method: "FORM",
+            statement: input.consentStatement,
+            version: input.consentVersion,
+            candidateConfirmed: true,
+        };
         if (existing.source === "DIRECT")
             existing.source = "WEBSITE";
         if (existing.status === "NEW")
@@ -275,7 +286,14 @@ async function upsertCareerCandidate(organizationId, input, resume) {
         resumePublicId: resume?.publicId ?? "",
         status: "SCREENING",
         source: "WEBSITE",
-        consent: { given: true, date: new Date(), method: "FORM" },
+        consent: {
+            given: true,
+            date: new Date(),
+            method: "FORM",
+            statement: input.consentStatement,
+            version: input.consentVersion,
+            candidateConfirmed: true,
+        },
     });
 }
 async function ensureConsent(input) {
@@ -286,11 +304,12 @@ async function ensureConsent(input) {
             mandateId: input.mandateId,
             consentGiven: true,
             consentDate: new Date(),
+            consentStatement: input.consentStatement,
+            consentVersion: input.consentVersion,
+            candidateConfirmed: true,
             consentMethod: "FORM",
             consentPurpose: "SOURCING",
-            consentDocument: input.resume?.url
-                ? { fileUrl: input.resume.url, fileName: input.resume.fileName }
-                : null,
+            consentDocument: null,
             createdBy: input.createdBy,
         });
     }
@@ -395,6 +414,11 @@ async function applyToMandate(mandate, input, file) {
             source: "CAREER_PAGE",
             status: "APPLIED",
             notes: input.notes ?? "",
+            consentStatement: input.consentStatement,
+            consentVersion: input.consentVersion,
+            consentConfirmed: true,
+            consentRecordedAt: new Date(),
+            consentMethod: "FORM",
             appliedAt: new Date(),
         });
         await ensureConsent({
@@ -402,7 +426,8 @@ async function applyToMandate(mandate, input, file) {
             candidateId,
             mandateId,
             createdBy: asId(mandate.createdBy),
-            resume,
+            consentStatement: input.consentStatement,
+            consentVersion: input.consentVersion,
         });
         await ensureDraftSubmission({
             organizationId,
@@ -483,6 +508,11 @@ async function applyToStaffJob(job, input, file) {
             stage: "applied",
             appliedDate: utcDateFromKey(today),
             notes: input.notes ?? "",
+            consentStatement: input.consentStatement,
+            consentVersion: input.consentVersion,
+            consentConfirmed: true,
+            consentRecordedAt: new Date(),
+            consentMethod: "FORM",
             sortOrder: (last?.sortOrder ?? 0) + 1,
         });
         await recordActivity(organizationId, {
@@ -527,6 +557,18 @@ async function applyToStaffJob(job, input, file) {
 }
 export async function applyToPublicCareer(listingId, input, file) {
     const listing = await findPublicListing(listingId);
+    const companyName = listing.kind === "job"
+        ? listing.companyName
+        : (() => {
+            const client = listing.doc.clientId && typeof listing.doc.clientId === "object"
+                ? listing.doc.clientId
+                : null;
+            return String(client?.companyName ?? "");
+        })();
+    const position = String(listing.kind === "job" ? listing.doc.title ?? "" : listing.doc.position ?? "");
+    if (input.consentVersion !== CAREER_CONSENT_VERSION || input.consentStatement !== careerConsentStatement(companyName, position)) {
+        throw AppError.badRequest("The consent text changed. Review and accept the current consent wording before applying.");
+    }
     if (listing.kind === "job") {
         return applyToStaffJob(listing.doc, input, file);
     }

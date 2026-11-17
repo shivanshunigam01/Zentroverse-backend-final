@@ -27,6 +27,15 @@ const contactPersonSchema = new Schema({
         default: "",
     },
 }, { _id: true });
+const kycEvidenceSchema = new Schema({
+    documentType: { type: String, required: true, trim: true, maxlength: 100 },
+    fileName: { type: String, trim: true, maxlength: 200, default: "" },
+    evidenceUrl: { type: String, required: true, trim: true, maxlength: 500 },
+    status: { type: String, enum: ["PENDING", "VERIFIED", "REJECTED"], default: "PENDING" },
+    reviewNotes: { type: String, trim: true, maxlength: 1000, default: "" },
+    reviewedAt: { type: Date, default: null },
+    reviewedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+}, { timestamps: true });
 const clientSchema = new Schema({
     organizationId: {
         type: Schema.Types.ObjectId,
@@ -124,8 +133,10 @@ const clientSchema = new Schema({
         default: "PENDING",
         index: true,
     },
+    kycEvidence: { type: [kycEvidenceSchema], default: [] },
     invoiceSubmissionProcess: { type: String, trim: true, maxlength: 1000, default: "" },
     purchaseOrderRequired: { type: Boolean, default: false },
+    purchaseOrderRequirements: { type: String, trim: true, maxlength: 1000, default: "" },
     vendorCode: { type: String, trim: true, maxlength: 100, default: "" },
     paymentCycleDays: { type: Number, min: 0, max: 365, default: 30 },
     authorizedSignatory: { type: String, trim: true, maxlength: 160, default: "" },

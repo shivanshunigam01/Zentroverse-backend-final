@@ -67,6 +67,8 @@ export const publicCareerApplySchema = z.object({
   consent: booleanFromForm.refine((value) => value === true, {
     message: "Consent is required to apply",
   }),
+  consentStatement: z.string().trim().min(20).max(2000),
+  consentVersion: z.literal("2026-11-v2"),
 })
 
 export const jobApplicationListQuerySchema = z.object({

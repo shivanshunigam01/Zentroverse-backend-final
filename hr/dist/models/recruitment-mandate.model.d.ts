@@ -15,6 +15,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -65,6 +75,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -117,6 +137,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -173,6 +203,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -221,6 +261,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -273,6 +323,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -327,6 +387,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;
@@ -381,6 +451,16 @@ export declare const RecruitmentMandateModel: mongoose.Model<{
     paymentTermsDays: number;
     replacementPeriodDays: number;
     createdBy: mongoose.Types.ObjectId;
+    clientApproval: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        evidenceUrl: string;
+        approvedAt?: NativeDate | null | undefined;
+        recordedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     mandateNumber: string;
     department: string;
     vacancies: number;

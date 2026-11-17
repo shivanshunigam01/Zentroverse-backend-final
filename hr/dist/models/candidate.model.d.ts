@@ -27,8 +27,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -62,8 +65,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -99,8 +105,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -140,8 +149,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -173,8 +185,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -210,8 +225,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -249,8 +267,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;
@@ -288,8 +309,11 @@ export declare const CandidateModel: mongoose.Model<{
     preferredLocations: string[];
     linkedInUrl: string;
     consent: {
+        version: string;
         method: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
+        candidateConfirmed: boolean;
         given: boolean;
+        statement: string;
         date?: NativeDate | null | undefined;
     };
     createdBy?: mongoose.Types.ObjectId | null | undefined;

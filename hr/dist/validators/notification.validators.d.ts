@@ -18,6 +18,7 @@ export declare const notificationListQuerySchema: z.ZodObject<{
         announcement: "announcement";
         document: "document";
         payroll: "payroll";
+        recruitment: "recruitment";
         system: "system";
     }>>;
     isRead: z.ZodPipe<z.ZodOptional<z.ZodEnum<{

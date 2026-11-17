@@ -191,6 +191,16 @@ export function toPublicInterview(doc) {
     const status = String(doc.status ?? "SCHEDULED") || "SCHEDULED";
     const decisionRaw = normalizeInterviewDecision(String(doc.decision ?? ""));
     const decision = decisionRaw || "";
+    const nextActionDeadline = dateKeyOf(doc.nextActionDeadline);
+    const isFeedbackPending = Boolean(nextActionDeadline) && !decision && status !== "CANCELLED";
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const deadlineStatus = !isFeedbackPending
+        ? "CLOSED"
+        : nextActionDeadline < todayKey
+            ? "OVERDUE"
+            : nextActionDeadline === todayKey
+                ? "DUE_TODAY"
+                : "UPCOMING";
     const interviewers = Array.isArray(doc.interviewers)
         ? doc.interviewers.map(toUserRef).filter((user) => user !== null)
         : [];
@@ -218,7 +228,8 @@ export function toPublicInterview(doc) {
             ? (INTERVIEW_DECISION_LABELS[decision] ?? decision)
             : "",
         nextAction: String(doc.nextAction ?? ""),
-        nextActionDeadline: dateKeyOf(doc.nextActionDeadline),
+        nextActionDeadline,
+        feedbackDeadlineStatus: deadlineStatus,
         createdAt: isoOf(doc.createdAt),
         updatedAt: isoOf(doc.updatedAt),
     };

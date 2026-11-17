@@ -88,6 +88,16 @@ const agreementFields = z.object({
   replacementPeriodDays: z.coerce.number().int().min(0).max(730).optional(),
   status: z.enum(AGREEMENT_STATUSES).optional(),
   signedDocument: signedDocumentSchema,
+  agreementText: z.string().trim().max(20000).optional(),
+  additionalTerms: z.string().trim().max(5000).optional(),
+  clientSignature: z.object({
+    name: z.string().trim().min(2).max(160),
+    title: z.string().trim().max(160).optional(),
+    email: z.email().max(160),
+    typedName: z.string().trim().min(2).max(160),
+    consentConfirmed: z.literal(true),
+  }).optional(),
+  agencySignatureConfirmed: z.literal(true).optional(),
 })
 
 function withAgreementRules<T extends z.ZodType>(schema: T) {
@@ -99,6 +109,10 @@ function withAgreementRules<T extends z.ZodType>(schema: T) {
       expiryDate?: string
       signedDate?: string
       status?: string
+      agreementText?: string
+      additionalTerms?: string
+      clientSignature?: { name?: string; typedName?: string; consentConfirmed?: boolean }
+      agencySignatureConfirmed?: boolean
     }
 
     const feeType = body.commercialTerms?.feeType
@@ -125,6 +139,23 @@ function withAgreementRules<T extends z.ZodType>(schema: T) {
         message: "Signed date cannot be before the effective date",
         path: ["signedDate"],
       })
+    }
+    if (body.status === "ACTIVE") {
+      if (!body.agreementText?.trim()) {
+        ctx.addIssue({ code: "custom", message: "Generate and review the agreement text before signing", path: ["agreementText"] })
+      }
+      if (!body.additionalTerms?.trim()) {
+        ctx.addIssue({ code: "custom", message: "Add governing law, dispute forum, and negotiated terms before signing", path: ["additionalTerms"] })
+      }
+      if (!body.clientSignature?.name?.trim() || body.clientSignature.name.trim() !== body.clientSignature.typedName?.trim()) {
+        ctx.addIssue({ code: "custom", message: "Client signatory must type their full name to confirm the signature", path: ["clientSignature", "typedName"] })
+      }
+      if (body.clientSignature?.consentConfirmed !== true) {
+        ctx.addIssue({ code: "custom", message: "Client electronic signature consent is required", path: ["clientSignature", "consentConfirmed"] })
+      }
+      if (body.agencySignatureConfirmed !== true) {
+        ctx.addIssue({ code: "custom", message: "Provider signatory authority confirmation is required", path: ["agencySignatureConfirmed"] })
+      }
     }
   })
 }

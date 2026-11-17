@@ -39,6 +39,7 @@ const exclusionsSchema = z
     restructuring: z.boolean().optional(),
     unsafeConditions: z.boolean().optional(),
     clientMisconduct: z.boolean().optional(),
+    otherClientCaused: z.boolean().optional(),
   })
   .optional()
 
@@ -54,18 +55,26 @@ const replacementFields = z.object({
   closedAt: optionalDateOnly,
   exclusions: exclusionsSchema,
   manualOverride: z.boolean().optional(),
+  eligibilityEvidenceUrl: z.string().trim().max(500).optional().refine((value) => !value || /^https?:\/\//i.test(value), "Evidence URL must begin with http:// or https://"),
+  eligibilityReviewNotes: z.string().trim().max(4000).optional(),
   remarks: z.string().trim().max(4000).optional().transform(emptyToUndefined),
 })
 
 function withReplacementRules<T extends z.ZodType>(schema: T) {
   return schema.superRefine((value, ctx) => {
-    const body = value as { status?: string; replacementCandidateId?: string }
+    const body = value as { status?: string; replacementCandidateId?: string; manualOverride?: boolean; eligibilityEvidenceUrl?: string; eligibilityReviewNotes?: string }
     if (body.status === "REPLACED" && !body.replacementCandidateId) {
       ctx.addIssue({
         code: "custom",
         path: ["replacementCandidateId"],
         message: "Select the replacement candidate",
       })
+    }
+    if (body.manualOverride && !body.eligibilityEvidenceUrl?.trim()) {
+      ctx.addIssue({ code: "custom", path: ["eligibilityEvidenceUrl"], message: "Evidence is required for an eligibility override" })
+    }
+    if (body.manualOverride && !body.eligibilityReviewNotes?.trim()) {
+      ctx.addIssue({ code: "custom", path: ["eligibilityReviewNotes"], message: "Explain the eligibility override" })
     }
   })
 }

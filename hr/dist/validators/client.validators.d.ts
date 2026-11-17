@@ -5,6 +5,18 @@ export declare const contactPersonSchema: z.ZodObject<{
     email: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodEmail, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
     phone: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
 }, z.core.$strip>;
+export declare const kycEvidenceSchema: z.ZodObject<{
+    id: z.ZodOptional<z.ZodString>;
+    documentType: z.ZodString;
+    fileName: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    evidenceUrl: z.ZodURL;
+    status: z.ZodOptional<z.ZodEnum<{
+        REJECTED: "REJECTED";
+        PENDING: "PENDING";
+        VERIFIED: "VERIFIED";
+    }>>;
+    reviewNotes: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+}, z.core.$strip>;
 export declare const createClientSchema: z.ZodObject<{
     companyName: z.ZodString;
     legalEntityName: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
@@ -39,8 +51,21 @@ export declare const createClientSchema: z.ZodObject<{
         PENDING: "PENDING";
         VERIFIED: "VERIFIED";
     }>>;
+    kycEvidence: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        id: z.ZodOptional<z.ZodString>;
+        documentType: z.ZodString;
+        fileName: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        evidenceUrl: z.ZodURL;
+        status: z.ZodOptional<z.ZodEnum<{
+            REJECTED: "REJECTED";
+            PENDING: "PENDING";
+            VERIFIED: "VERIFIED";
+        }>>;
+        reviewNotes: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    }, z.core.$strip>>>;
     invoiceSubmissionProcess: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     purchaseOrderRequired: z.ZodOptional<z.ZodBoolean>;
+    purchaseOrderRequirements: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     vendorCode: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     paymentCycleDays: z.ZodOptional<z.ZodCoercedNumber<unknown>>;
     authorizedSignatory: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
@@ -83,8 +108,21 @@ export declare const updateClientSchema: z.ZodObject<{
         PENDING: "PENDING";
         VERIFIED: "VERIFIED";
     }>>>;
+    kycEvidence: z.ZodOptional<z.ZodOptional<z.ZodArray<z.ZodObject<{
+        id: z.ZodOptional<z.ZodString>;
+        documentType: z.ZodString;
+        fileName: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        evidenceUrl: z.ZodURL;
+        status: z.ZodOptional<z.ZodEnum<{
+            REJECTED: "REJECTED";
+            PENDING: "PENDING";
+            VERIFIED: "VERIFIED";
+        }>>;
+        reviewNotes: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+    }, z.core.$strip>>>>;
     invoiceSubmissionProcess: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
     purchaseOrderRequired: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    purchaseOrderRequirements: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
     vendorCode: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
     paymentCycleDays: z.ZodOptional<z.ZodOptional<z.ZodCoercedNumber<unknown>>>;
     authorizedSignatory: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;

@@ -54,8 +54,34 @@ export declare function assertSubmissionWorkflowReady(input: {
         }>;
         onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
         KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+        kycEvidence: import("mongoose").Types.DocumentArray<{
+            status: "REJECTED" | "PENDING" | "VERIFIED";
+            fileName: string;
+            documentType: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+            reviewedAt?: NativeDate | null | undefined;
+            reviewedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        } & import("mongoose").DefaultTimestampProps, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
+            status: "REJECTED" | "PENDING" | "VERIFIED";
+            fileName: string;
+            documentType: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+            reviewedAt?: NativeDate | null | undefined;
+            reviewedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        } & import("mongoose").DefaultTimestampProps, {}, {}> & {
+            status: "REJECTED" | "PENDING" | "VERIFIED";
+            fileName: string;
+            documentType: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+            reviewedAt?: NativeDate | null | undefined;
+            reviewedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        } & import("mongoose").DefaultTimestampProps>;
         invoiceSubmissionProcess: string;
         purchaseOrderRequired: boolean;
+        purchaseOrderRequirements: string;
         vendorCode: string;
         paymentCycleDays: number;
         authorizedSignatory: string;
@@ -100,8 +126,34 @@ export declare function assertSubmissionWorkflowReady(input: {
         }>;
         onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
         KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+        kycEvidence: import("mongoose").Types.DocumentArray<{
+            status: "REJECTED" | "PENDING" | "VERIFIED";
+            fileName: string;
+            documentType: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+            reviewedAt?: NativeDate | null | undefined;
+            reviewedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        } & import("mongoose").DefaultTimestampProps, import("mongoose").Types.Subdocument<import("mongodb").ObjectId, unknown, {
+            status: "REJECTED" | "PENDING" | "VERIFIED";
+            fileName: string;
+            documentType: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+            reviewedAt?: NativeDate | null | undefined;
+            reviewedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        } & import("mongoose").DefaultTimestampProps, {}, {}> & {
+            status: "REJECTED" | "PENDING" | "VERIFIED";
+            fileName: string;
+            documentType: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+            reviewedAt?: NativeDate | null | undefined;
+            reviewedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        } & import("mongoose").DefaultTimestampProps>;
         invoiceSubmissionProcess: string;
         purchaseOrderRequired: boolean;
+        purchaseOrderRequirements: string;
         vendorCode: string;
         paymentCycleDays: number;
         authorizedSignatory: string;
@@ -132,6 +184,16 @@ export declare function assertSubmissionWorkflowReady(input: {
         paymentTermsDays: number;
         replacementPeriodDays: number;
         createdBy: import("mongoose").Types.ObjectId;
+        clientApproval: {
+            name: string;
+            email: string;
+            title: string;
+            typedName: string;
+            consentConfirmed: boolean;
+            evidenceUrl: string;
+            approvedAt?: NativeDate | null | undefined;
+            recordedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        };
         mandateNumber: string;
         department: string;
         vacancies: number;
@@ -184,6 +246,16 @@ export declare function assertSubmissionWorkflowReady(input: {
         paymentTermsDays: number;
         replacementPeriodDays: number;
         createdBy: import("mongoose").Types.ObjectId;
+        clientApproval: {
+            name: string;
+            email: string;
+            title: string;
+            typedName: string;
+            consentConfirmed: boolean;
+            evidenceUrl: string;
+            approvedAt?: NativeDate | null | undefined;
+            recordedBy?: import("mongoose").Types.ObjectId | null | undefined;
+        };
         mandateNumber: string;
         department: string;
         vacancies: number;
@@ -239,12 +311,27 @@ export declare function assertSubmissionWorkflowReady(input: {
         ownershipPeriodMonths: number;
         duplicateNotificationDays: number;
         replacementPeriodDays: number;
+        agreementText: string;
+        additionalTerms: string;
         createdBy: import("mongoose").Types.ObjectId;
         expiryDate?: NativeDate | null | undefined;
         signedDate?: NativeDate | null | undefined;
         signedDocument?: {
             fileUrl: string;
             fileName: string;
+        } | null | undefined;
+        clientSignature?: {
+            name: string;
+            email: string;
+            title: string;
+            typedName: string;
+            consentConfirmed: boolean;
+            signedAt?: NativeDate | null | undefined;
+        } | null | undefined;
+        agencySignature?: {
+            authorityConfirmed: boolean;
+            userId?: import("mongoose").Types.ObjectId | null | undefined;
+            signedAt?: NativeDate | null | undefined;
         } | null | undefined;
     } & import("mongoose").DefaultTimestampProps, {
         id: string;
@@ -266,12 +353,27 @@ export declare function assertSubmissionWorkflowReady(input: {
         ownershipPeriodMonths: number;
         duplicateNotificationDays: number;
         replacementPeriodDays: number;
+        agreementText: string;
+        additionalTerms: string;
         createdBy: import("mongoose").Types.ObjectId;
         expiryDate?: NativeDate | null | undefined;
         signedDate?: NativeDate | null | undefined;
         signedDocument?: {
             fileUrl: string;
             fileName: string;
+        } | null | undefined;
+        clientSignature?: {
+            name: string;
+            email: string;
+            title: string;
+            typedName: string;
+            consentConfirmed: boolean;
+            signedAt?: NativeDate | null | undefined;
+        } | null | undefined;
+        agencySignature?: {
+            authorityConfirmed: boolean;
+            userId?: import("mongoose").Types.ObjectId | null | undefined;
+            signedAt?: NativeDate | null | undefined;
         } | null | undefined;
     } & import("mongoose").DefaultTimestampProps & {
         _id: import("mongoose").Types.ObjectId;
@@ -287,6 +389,7 @@ export declare function assertSubmissionWorkflowReady(input: {
         createdBy: import("mongoose").Types.ObjectId;
         consentGiven: boolean;
         consentStatement: string;
+        consentVersion: string;
         candidateConfirmed: boolean;
         consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
         consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -308,6 +411,7 @@ export declare function assertSubmissionWorkflowReady(input: {
         createdBy: import("mongoose").Types.ObjectId;
         consentGiven: boolean;
         consentStatement: string;
+        consentVersion: string;
         candidateConfirmed: boolean;
         consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
         consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -331,6 +435,7 @@ export declare function assertSubmissionWorkflowReady(input: {
         candidateId: import("mongoose").Types.ObjectId;
         mandateId: import("mongoose").Types.ObjectId;
         remarks: string;
+        evaluatedAt: NativeDate;
         recruiterId: import("mongoose").Types.ObjectId;
         scoringVersion: "LEGACY_6" | "POINT_100";
         scores: {
@@ -354,7 +459,6 @@ export declare function assertSubmissionWorkflowReady(input: {
         totalScore: number;
         recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
         concerns: string[];
-        evaluatedAt: NativeDate;
     } & import("mongoose").DefaultTimestampProps, {
         id: string;
     }, {
@@ -365,6 +469,7 @@ export declare function assertSubmissionWorkflowReady(input: {
         candidateId: import("mongoose").Types.ObjectId;
         mandateId: import("mongoose").Types.ObjectId;
         remarks: string;
+        evaluatedAt: NativeDate;
         recruiterId: import("mongoose").Types.ObjectId;
         scoringVersion: "LEGACY_6" | "POINT_100";
         scores: {
@@ -388,7 +493,6 @@ export declare function assertSubmissionWorkflowReady(input: {
         totalScore: number;
         recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
         concerns: string[];
-        evaluatedAt: NativeDate;
     } & import("mongoose").DefaultTimestampProps & {
         _id: import("mongoose").Types.ObjectId;
     } & {

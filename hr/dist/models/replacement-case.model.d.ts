@@ -11,6 +11,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -26,6 +39,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -44,6 +58,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -59,6 +86,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -79,6 +107,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -94,6 +135,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -118,6 +160,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -133,6 +188,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -149,6 +205,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -164,6 +233,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -184,6 +254,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -199,6 +282,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -221,6 +305,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -236,6 +333,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;
@@ -258,6 +356,19 @@ export declare const ReplacementCaseModel: mongoose.Model<{
     replacementRequestedDate: NativeDate;
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        agreementVerified: boolean;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: "PENDING" | "PAID_ON_TIME" | "LATE" | "NO_INVOICE" | "UNKNOWN";
+        priorFreeReplacements: number;
+        replacementPeriodDays?: number | null | undefined;
+        guaranteeEndDate?: NativeDate | null | undefined;
+        evaluatedAt?: NativeDate | null | undefined;
+        evaluatedBy?: mongoose.Types.ObjectId | null | undefined;
+    };
     freeReplacement: boolean;
     freeReplacementUsed: boolean;
     replacementCount: number;
@@ -273,6 +384,7 @@ export declare const ReplacementCaseModel: mongoose.Model<{
         restructuring: boolean;
         unsafeConditions: boolean;
         clientMisconduct: boolean;
+        otherClientCaused: boolean;
     };
     replacementCandidateId?: mongoose.Types.ObjectId | null | undefined;
     closedAt?: NativeDate | null | undefined;

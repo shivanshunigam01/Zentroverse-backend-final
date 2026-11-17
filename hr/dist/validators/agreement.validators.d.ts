@@ -37,6 +37,16 @@ export declare const createAgreementSchema: z.ZodObject<{
         fileUrl: string;
         fileName: string | undefined;
     } | null | undefined>>;
+    agreementText: z.ZodOptional<z.ZodString>;
+    additionalTerms: z.ZodOptional<z.ZodString>;
+    clientSignature: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        title: z.ZodOptional<z.ZodString>;
+        email: z.ZodEmail;
+        typedName: z.ZodString;
+        consentConfirmed: z.ZodLiteral<true>;
+    }, z.core.$strip>>;
+    agencySignatureConfirmed: z.ZodOptional<z.ZodLiteral<true>>;
 }, z.core.$strip>;
 export declare const updateAgreementSchema: z.ZodObject<{
     clientId: z.ZodOptional<z.ZodString>;
@@ -76,6 +86,16 @@ export declare const updateAgreementSchema: z.ZodObject<{
         fileUrl: string;
         fileName: string | undefined;
     } | null | undefined>>>;
+    agreementText: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    additionalTerms: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    clientSignature: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        title: z.ZodOptional<z.ZodString>;
+        email: z.ZodEmail;
+        typedName: z.ZodString;
+        consentConfirmed: z.ZodLiteral<true>;
+    }, z.core.$strip>>>;
+    agencySignatureConfirmed: z.ZodOptional<z.ZodOptional<z.ZodLiteral<true>>>;
 }, z.core.$strip>;
 export declare const agreementListQuerySchema: z.ZodObject<{
     search: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;

@@ -15,6 +15,9 @@ const consentSchema = new Schema(
       enum: [...CANDIDATE_CONSENT_METHODS, ""],
       default: "",
     },
+    statement: { type: String, trim: true, maxlength: 2000, default: "" },
+    version: { type: String, trim: true, maxlength: 40, default: "" },
+    candidateConfirmed: { type: Boolean, default: false },
   },
   { _id: false }
 )

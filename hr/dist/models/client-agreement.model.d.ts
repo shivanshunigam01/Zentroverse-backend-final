@@ -15,12 +15,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
 } & mongoose.DefaultTimestampProps, {}, {}, {
     id: string;
@@ -40,12 +55,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
 } & mongoose.DefaultTimestampProps, {
     id: string;
@@ -67,12 +97,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
@@ -98,12 +143,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
     organizationId: mongoose.Types.ObjectId;
@@ -121,12 +181,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
 } & mongoose.DefaultTimestampProps, {
     id: string;
@@ -148,12 +223,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
@@ -177,12 +267,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
     createdAt: NativeDate;
     updatedAt: NativeDate;
@@ -206,12 +311,27 @@ export declare const ClientAgreementModel: mongoose.Model<{
     ownershipPeriodMonths: number;
     duplicateNotificationDays: number;
     replacementPeriodDays: number;
+    agreementText: string;
+    additionalTerms: string;
     createdBy: mongoose.Types.ObjectId;
     expiryDate?: NativeDate | null | undefined;
     signedDate?: NativeDate | null | undefined;
     signedDocument?: {
         fileUrl: string;
         fileName: string;
+    } | null | undefined;
+    clientSignature?: {
+        name: string;
+        email: string;
+        title: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt?: NativeDate | null | undefined;
+    } | null | undefined;
+    agencySignature?: {
+        authorityConfirmed: boolean;
+        userId?: mongoose.Types.ObjectId | null | undefined;
+        signedAt?: NativeDate | null | undefined;
     } | null | undefined;
     createdAt: NativeDate;
     updatedAt: NativeDate;

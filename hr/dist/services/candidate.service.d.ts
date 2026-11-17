@@ -27,6 +27,9 @@ export declare function toPublicCandidateProfile(doc: Record<string, unknown>): 
         given: boolean;
         date: string | null;
         method: string;
+        statement: string;
+        version: string;
+        candidateConfirmed: boolean;
     };
     status: "SUBMITTED" | "REJECTED" | "ACTIVE" | "ON_HOLD" | "NEW" | "SCREENING" | "INTERVIEWING" | "OFFERED" | "HIRED";
     statusLabel: string;
@@ -71,6 +74,9 @@ export declare function listCandidates(auth: AuthContext, query: CandidateProfil
             given: boolean;
             date: string | null;
             method: string;
+            statement: string;
+            version: string;
+            candidateConfirmed: boolean;
         };
         status: "SUBMITTED" | "REJECTED" | "ACTIVE" | "ON_HOLD" | "NEW" | "SCREENING" | "INTERVIEWING" | "OFFERED" | "HIRED";
         statusLabel: string;
@@ -111,6 +117,9 @@ export declare function getCandidate(auth: AuthContext, id: string): Promise<{
         given: boolean;
         date: string | null;
         method: string;
+        statement: string;
+        version: string;
+        candidateConfirmed: boolean;
     };
     status: "SUBMITTED" | "REJECTED" | "ACTIVE" | "ON_HOLD" | "NEW" | "SCREENING" | "INTERVIEWING" | "OFFERED" | "HIRED";
     statusLabel: string;
@@ -150,6 +159,9 @@ export declare function createCandidate(auth: AuthContext, input: CreateCandidat
         given: boolean;
         date: string | null;
         method: string;
+        statement: string;
+        version: string;
+        candidateConfirmed: boolean;
     };
     status: "SUBMITTED" | "REJECTED" | "ACTIVE" | "ON_HOLD" | "NEW" | "SCREENING" | "INTERVIEWING" | "OFFERED" | "HIRED";
     statusLabel: string;
@@ -189,6 +201,9 @@ export declare function updateCandidate(auth: AuthContext, id: string, input: Up
         given: boolean;
         date: string | null;
         method: string;
+        statement: string;
+        version: string;
+        candidateConfirmed: boolean;
     };
     status: "SUBMITTED" | "REJECTED" | "ACTIVE" | "ON_HOLD" | "NEW" | "SCREENING" | "INTERVIEWING" | "OFFERED" | "HIRED";
     statusLabel: string;

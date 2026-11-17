@@ -13,6 +13,16 @@ const salarySchema = new Schema({
     fixedPercent: { type: Number, min: 0, max: 100, default: null },
     variablePercent: { type: Number, min: 0, max: 100, default: null },
 }, { _id: false });
+const clientApprovalSchema = new Schema({
+    name: { type: String, trim: true, maxlength: 160, default: "" },
+    title: { type: String, trim: true, maxlength: 160, default: "" },
+    email: { type: String, trim: true, lowercase: true, maxlength: 160, default: "" },
+    typedName: { type: String, trim: true, maxlength: 160, default: "" },
+    approvedAt: { type: Date, default: null },
+    evidenceUrl: { type: String, trim: true, maxlength: 500, default: "" },
+    consentConfirmed: { type: Boolean, default: false },
+    recordedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+}, { _id: false });
 const recruitmentMandateSchema = new Schema({
     organizationId: {
         type: Schema.Types.ObjectId,
@@ -32,6 +42,7 @@ const recruitmentMandateSchema = new Schema({
         default: null,
         index: true,
     },
+    clientApproval: { type: clientApprovalSchema, default: () => ({}) },
     mandateNumber: {
         type: String,
         required: true,

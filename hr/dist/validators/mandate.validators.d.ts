@@ -2,6 +2,15 @@ import { z } from "zod";
 export declare const createMandateSchema: z.ZodObject<{
     clientId: z.ZodString;
     agreementId: z.ZodString;
+    clientApproval: z.ZodOptional<z.ZodObject<{
+        name: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        title: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        email: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodEmail, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
+        typedName: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        approvedAt: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
+        evidenceUrl: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        consentConfirmed: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strip>>;
     position: z.ZodString;
     department: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     employmentType: z.ZodOptional<z.ZodEnum<{
@@ -72,6 +81,15 @@ export declare const createMandateSchema: z.ZodObject<{
 export declare const updateMandateSchema: z.ZodObject<{
     clientId: z.ZodOptional<z.ZodString>;
     agreementId: z.ZodOptional<z.ZodString>;
+    clientApproval: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        name: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        title: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        email: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodEmail, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
+        typedName: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        approvedAt: z.ZodPipe<z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodLiteral<"">]>>, z.ZodTransform<string | undefined, string | undefined>>;
+        evidenceUrl: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
+        consentConfirmed: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strip>>>;
     position: z.ZodOptional<z.ZodString>;
     department: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
     employmentType: z.ZodOptional<z.ZodOptional<z.ZodEnum<{

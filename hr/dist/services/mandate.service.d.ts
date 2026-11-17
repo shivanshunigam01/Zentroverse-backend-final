@@ -19,6 +19,21 @@ export declare function toPublicMandate(doc: Record<string, unknown>, job?: {
         agreementNumber: string;
         status: string;
     } | null;
+    clientApproval: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        approvedAt: string;
+        evidenceUrl: string;
+        consentConfirmed: boolean;
+        recordedBy: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+    };
     mandateNumber: string;
     position: string;
     department: string;
@@ -103,6 +118,21 @@ export declare function listMandates(auth: AuthContext, query: MandateListQueryI
             agreementNumber: string;
             status: string;
         } | null;
+        clientApproval: {
+            name: string;
+            title: string;
+            email: string;
+            typedName: string;
+            approvedAt: string;
+            evidenceUrl: string;
+            consentConfirmed: boolean;
+            recordedBy: {
+                id: string;
+                name: string;
+                email: string;
+                role: string;
+            } | null;
+        };
         mandateNumber: string;
         position: string;
         department: string;
@@ -183,6 +213,21 @@ export declare function getMandate(auth: AuthContext, id: string): Promise<{
         agreementNumber: string;
         status: string;
     } | null;
+    clientApproval: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        approvedAt: string;
+        evidenceUrl: string;
+        consentConfirmed: boolean;
+        recordedBy: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+    };
     mandateNumber: string;
     position: string;
     department: string;
@@ -262,6 +307,21 @@ export declare function createMandate(auth: AuthContext, input: CreateMandateInp
         agreementNumber: string;
         status: string;
     } | null;
+    clientApproval: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        approvedAt: string;
+        evidenceUrl: string;
+        consentConfirmed: boolean;
+        recordedBy: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+    };
     mandateNumber: string;
     position: string;
     department: string;
@@ -341,6 +401,21 @@ export declare function updateMandate(auth: AuthContext, id: string, input: Upda
         agreementNumber: string;
         status: string;
     } | null;
+    clientApproval: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        approvedAt: string;
+        evidenceUrl: string;
+        consentConfirmed: boolean;
+        recordedBy: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+    };
     mandateNumber: string;
     position: string;
     department: string;

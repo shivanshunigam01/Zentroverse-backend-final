@@ -19,12 +19,15 @@ export async function assertSubmissionWorkflowReady(input) {
     const client = await ClientModel.findOne({
         _id: input.clientId,
         organizationId: input.organizationId,
-    }).select("_id status companyName");
+    }).select("_id status companyName onboardingStatus KYCStatus kycEvidence invoiceSubmissionProcess authorizedSignatory escalationContact termsApproved purchaseOrderRequired purchaseOrderRequirements");
     if (!client) {
         throw AppError.badRequest(MESSAGES.CLIENT_NOT_IN_ORGANIZATION);
     }
     if (String(client.status) !== "ACTIVE") {
         throw AppError.badRequest(MESSAGES.SUBMISSION_CLIENT_INACTIVE);
+    }
+    if (String(client.onboardingStatus) !== "COMPLETED" || String(client.KYCStatus) !== "VERIFIED") {
+        throw AppError.badRequest("Client onboarding and KYC must be completed and approved before candidate submission");
     }
     const mandate = await RecruitmentMandateModel.findOne({
         _id: input.mandateId,
@@ -61,12 +64,21 @@ export async function assertSubmissionWorkflowReady(input) {
     if (agreementStatus !== "ACTIVE") {
         throw AppError.badRequest(MESSAGES.SUBMISSION_AGREEMENT_INACTIVE);
     }
+    const consentToday = new Date();
+    consentToday.setUTCHours(0, 0, 0, 0);
     const consent = await CandidateConsentModel.findOne({
         organizationId: input.organizationId,
         candidateId: input.candidateId,
         mandateId: input.mandateId,
+        consentPurpose: { $in: ["SOURCING", "SUBMISSION"] },
         consentGiven: true,
-        $or: [{ withdrawnAt: null }, { withdrawnAt: { $exists: false } }],
+        candidateConfirmed: true,
+        consentStatement: { $type: "string", $ne: "" },
+        consentVersion: { $type: "string", $ne: "" },
+        $and: [
+            { $or: [{ withdrawnAt: null }, { withdrawnAt: { $exists: false } }] },
+            { $or: [{ expiryDate: null }, { expiryDate: { $exists: false } }, { expiryDate: { $gte: consentToday } }] },
+        ],
     }).select("_id");
     if (!consent) {
         throw AppError.badRequest(MESSAGES.SUBMISSION_CONSENT_REQUIRED);
