@@ -91,7 +91,14 @@ async function upsertWebsiteCandidate(organizationId, input) {
             found.resume = input.resume;
             found.resumeUrl = input.resume;
         }
-        found.consent = { given: true, date: new Date(), method: "FORM" };
+        found.consent = {
+            given: true,
+            date: new Date(),
+            method: "FORM",
+            statement: "",
+            version: "",
+            candidateConfirmed: false,
+        };
         if (found.source === "DIRECT")
             found.source = "WEBSITE";
         await found.save();

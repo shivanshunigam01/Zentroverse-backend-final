@@ -32,8 +32,34 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -76,8 +102,34 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -122,8 +174,34 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -172,8 +250,34 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -214,8 +318,34 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -260,8 +390,34 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+    } & mongoose.DefaultTimestampProps>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -308,8 +464,40 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+        createdAt: NativeDate;
+        updatedAt: NativeDate;
+    }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+        createdAt: NativeDate;
+        updatedAt: NativeDate;
+    }, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+        createdAt: NativeDate;
+        updatedAt: NativeDate;
+    }>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -356,8 +544,40 @@ export declare const ClientModel: mongoose.Model<{
     }>;
     onboardingStatus: "REJECTED" | "PENDING" | "COMPLETED";
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
+    kycEvidence: mongoose.Types.DocumentArray<{
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+        createdAt: NativeDate;
+        updatedAt: NativeDate;
+    }, mongoose.Types.Subdocument<mongoose.mongo.ObjectId, unknown, {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+        createdAt: NativeDate;
+        updatedAt: NativeDate;
+    }, {}, {}> & {
+        status: "REJECTED" | "PENDING" | "VERIFIED";
+        fileName: string;
+        documentType: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+        reviewedAt?: NativeDate | null | undefined;
+        reviewedBy?: mongoose.Types.ObjectId | null | undefined;
+        createdAt: NativeDate;
+        updatedAt: NativeDate;
+    }>;
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;

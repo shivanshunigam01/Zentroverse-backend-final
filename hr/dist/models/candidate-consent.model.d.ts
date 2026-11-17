@@ -6,6 +6,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -25,6 +26,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -46,6 +48,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -71,6 +74,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -88,6 +92,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -109,6 +114,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -132,6 +138,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";
@@ -155,6 +162,7 @@ export declare const CandidateConsentModel: mongoose.Model<{
     createdBy: mongoose.Types.ObjectId;
     consentGiven: boolean;
     consentStatement: string;
+    consentVersion: string;
     candidateConfirmed: boolean;
     consentMethod: "" | "OTHER" | "FORM" | "EMAIL" | "WHATSAPP" | "VERBAL";
     consentPurpose: "OTHER" | "SOURCING" | "SUBMISSION" | "INTERVIEW" | "BACKGROUND_CHECK" | "TALENT_POOL";

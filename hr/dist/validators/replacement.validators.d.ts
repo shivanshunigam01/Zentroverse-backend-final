@@ -45,8 +45,11 @@ export declare const createReplacementSchema: z.ZodObject<{
         restructuring: z.ZodOptional<z.ZodBoolean>;
         unsafeConditions: z.ZodOptional<z.ZodBoolean>;
         clientMisconduct: z.ZodOptional<z.ZodBoolean>;
+        otherClientCaused: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strip>>;
     manualOverride: z.ZodOptional<z.ZodBoolean>;
+    eligibilityEvidenceUrl: z.ZodOptional<z.ZodString>;
+    eligibilityReviewNotes: z.ZodOptional<z.ZodString>;
     remarks: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
 }, z.core.$strip>;
 export declare const updateReplacementSchema: z.ZodObject<{
@@ -75,8 +78,11 @@ export declare const updateReplacementSchema: z.ZodObject<{
         restructuring: z.ZodOptional<z.ZodBoolean>;
         unsafeConditions: z.ZodOptional<z.ZodBoolean>;
         clientMisconduct: z.ZodOptional<z.ZodBoolean>;
+        otherClientCaused: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strip>>>;
     manualOverride: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    eligibilityEvidenceUrl: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    eligibilityReviewNotes: z.ZodOptional<z.ZodOptional<z.ZodString>>;
     remarks: z.ZodOptional<z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>>;
     joiningId: z.ZodOptional<z.ZodString>;
     replacementReason: z.ZodOptional<z.ZodEnum<{

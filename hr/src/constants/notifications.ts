@@ -4,6 +4,7 @@ export const NOTIFICATION_TYPES = [
   "announcement",
   "document",
   "payroll",
+  "recruitment",
   "system",
 ] as const
 

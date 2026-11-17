@@ -33,6 +33,26 @@ export declare function toPublicAgreement(doc: Record<string, unknown>): {
         fileUrl: string;
         fileName: string;
     } | null;
+    agreementText: string;
+    additionalTerms: string;
+    clientSignature: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt: string;
+    } | null;
+    agencySignature: {
+        signer: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+        signedAt: string;
+        authorityConfirmed: boolean;
+    } | null;
     createdBy: {
         id: string;
         name: string;
@@ -80,6 +100,26 @@ export declare function listAgreements(auth: AuthContext, query: AgreementListQu
             fileUrl: string;
             fileName: string;
         } | null;
+        agreementText: string;
+        additionalTerms: string;
+        clientSignature: {
+            name: string;
+            title: string;
+            email: string;
+            typedName: string;
+            consentConfirmed: boolean;
+            signedAt: string;
+        } | null;
+        agencySignature: {
+            signer: {
+                id: string;
+                name: string;
+                email: string;
+                role: string;
+            } | null;
+            signedAt: string;
+            authorityConfirmed: boolean;
+        } | null;
         createdBy: {
             id: string;
             name: string;
@@ -123,6 +163,26 @@ export declare function getAgreement(auth: AuthContext, id: string): Promise<{
         fileUrl: string;
         fileName: string;
     } | null;
+    agreementText: string;
+    additionalTerms: string;
+    clientSignature: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt: string;
+    } | null;
+    agencySignature: {
+        signer: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+        signedAt: string;
+        authorityConfirmed: boolean;
+    } | null;
     createdBy: {
         id: string;
         name: string;
@@ -165,6 +225,26 @@ export declare function createAgreement(auth: AuthContext, input: CreateAgreemen
         fileUrl: string;
         fileName: string;
     } | null;
+    agreementText: string;
+    additionalTerms: string;
+    clientSignature: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt: string;
+    } | null;
+    agencySignature: {
+        signer: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+        signedAt: string;
+        authorityConfirmed: boolean;
+    } | null;
     createdBy: {
         id: string;
         name: string;
@@ -206,6 +286,26 @@ export declare function updateAgreement(auth: AuthContext, id: string, input: Up
     signedDocument: {
         fileUrl: string;
         fileName: string;
+    } | null;
+    agreementText: string;
+    additionalTerms: string;
+    clientSignature: {
+        name: string;
+        title: string;
+        email: string;
+        typedName: string;
+        consentConfirmed: boolean;
+        signedAt: string;
+    } | null;
+    agencySignature: {
+        signer: {
+            id: string;
+            name: string;
+            email: string;
+            role: string;
+        } | null;
+        signedAt: string;
+        authorityConfirmed: boolean;
     } | null;
     createdBy: {
         id: string;

@@ -13,6 +13,10 @@ const optionalText = (max, label) => z
     .max(max, `${label} must be ${max} characters or fewer`)
     .optional()
     .transform(emptyToUndefined);
+const optionalEmail = z
+    .union([z.email("Enter a valid client approver email"), z.literal("")])
+    .optional()
+    .transform((value) => (value ? value.trim().toLowerCase() : undefined));
 const stringList = (maxItems, maxLength, label) => z
     .array(z
     .string()
@@ -51,6 +55,15 @@ const optionalDateOnly = z
 const mandateFields = z.object({
     clientId: objectIdSchema,
     agreementId: objectIdSchema,
+    clientApproval: z.object({
+        name: optionalText(160, "Client approver name"),
+        title: optionalText(160, "Client approver title"),
+        email: optionalEmail,
+        typedName: optionalText(160, "Client approval signature"),
+        approvedAt: optionalDateOnly,
+        evidenceUrl: optionalText(500, "Client approval evidence URL").refine((value) => !value || /^https?:\/\//i.test(value), "Evidence URL must begin with http:// or https://"),
+        consentConfirmed: z.boolean().optional(),
+    }).optional(),
     position: z
         .string()
         .trim()
@@ -96,7 +109,7 @@ const mandateFields = z.object({
     status: z.enum(MANDATE_STATUSES).optional(),
     isPublic: z.boolean().optional(),
 });
-function withFeeCap(schema) {
+function withFeeCap(schema, requireClientApproval) {
     return schema.superRefine((value, ctx) => {
         const body = value;
         if (body.feeType === "PERCENTAGE" && body.recruitmentFee !== undefined && body.recruitmentFee > 100) {
@@ -106,10 +119,25 @@ function withFeeCap(schema) {
                 path: ["recruitmentFee"],
             });
         }
+        if (requireClientApproval && (body.status === "APPROVED" || body.status === "OPEN")) {
+            const approval = body.clientApproval;
+            if (!approval?.name?.trim())
+                ctx.addIssue({ code: "custom", message: "Enter the client approver's name", path: ["clientApproval", "name"] });
+            if (!approval?.email?.trim())
+                ctx.addIssue({ code: "custom", message: "Enter the client approver's email", path: ["clientApproval", "email"] });
+            if (!approval?.approvedAt)
+                ctx.addIssue({ code: "custom", message: "Record the date the client approved this mandate", path: ["clientApproval", "approvedAt"] });
+            if (!approval?.evidenceUrl?.trim())
+                ctx.addIssue({ code: "custom", message: "Add a link to the client's signed approval or written authorization", path: ["clientApproval", "evidenceUrl"] });
+            if (!approval?.name?.trim() || approval.name.trim() !== approval.typedName?.trim())
+                ctx.addIssue({ code: "custom", message: "The client approver must type their full name as confirmation", path: ["clientApproval", "typedName"] });
+            if (!approval?.consentConfirmed)
+                ctx.addIssue({ code: "custom", message: "Confirm the client approved these mandate details", path: ["clientApproval", "consentConfirmed"] });
+        }
     });
 }
-export const createMandateSchema = withFeeCap(mandateFields);
-export const updateMandateSchema = withFeeCap(mandateFields.partial());
+export const createMandateSchema = withFeeCap(mandateFields, true);
+export const updateMandateSchema = withFeeCap(mandateFields.partial(), false);
 export const mandateListQuerySchema = z.object({
     status: z.enum(MANDATE_STATUSES).optional(),
     priority: z.enum(MANDATE_PRIORITIES).optional(),

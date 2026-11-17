@@ -53,6 +53,7 @@ export const createConsentSchema = z.object({
     mandateId: objectIdSchema,
     consentGiven: z.boolean().optional(),
     consentStatement: z.string().trim().max(2000).optional(),
+    consentVersion: z.string().trim().max(40).optional(),
     candidateConfirmed: z.boolean().optional(),
     consentDate: optionalDateOnly,
     consentMethod: z.enum(CANDIDATE_CONSENT_METHODS).optional(),

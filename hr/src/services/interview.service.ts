@@ -240,6 +240,16 @@ export function toPublicInterview(doc: Record<string, unknown>) {
   const status = (String(doc.status ?? "SCHEDULED") as InterviewStatus) || "SCHEDULED"
   const decisionRaw = normalizeInterviewDecision(String(doc.decision ?? ""))
   const decision = (decisionRaw as InterviewDecision) || ""
+  const nextActionDeadline = dateKeyOf(doc.nextActionDeadline)
+  const isFeedbackPending = Boolean(nextActionDeadline) && !decision && status !== "CANCELLED"
+  const todayKey = new Date().toISOString().slice(0, 10)
+  const deadlineStatus = !isFeedbackPending
+    ? "CLOSED"
+    : nextActionDeadline < todayKey
+      ? "OVERDUE"
+      : nextActionDeadline === todayKey
+        ? "DUE_TODAY"
+        : "UPCOMING"
   const interviewers = Array.isArray(doc.interviewers)
     ? doc.interviewers.map(toUserRef).filter((user): user is NonNullable<typeof user> => user !== null)
     : []
@@ -268,7 +278,8 @@ export function toPublicInterview(doc: Record<string, unknown>) {
       ? (INTERVIEW_DECISION_LABELS[decision as InterviewDecision] ?? decision)
       : "",
     nextAction: String(doc.nextAction ?? ""),
-    nextActionDeadline: dateKeyOf(doc.nextActionDeadline),
+    nextActionDeadline,
+    feedbackDeadlineStatus: deadlineStatus,
     createdAt: isoOf(doc.createdAt),
     updatedAt: isoOf(doc.updatedAt),
   }

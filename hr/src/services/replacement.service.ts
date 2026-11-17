@@ -13,8 +13,11 @@ import {
 import { DEFAULT_REPLACEMENT_PERIOD_DAYS } from "../constants/agreements.js"
 import { MESSAGES } from "../constants/messages.js"
 import { CandidateModel } from "../models/candidate.model.js"
+import { ClientAgreementModel } from "../models/client-agreement.model.js"
 import { ClientModel } from "../models/client.model.js"
+import { GuaranteeFollowUpModel } from "../models/guarantee-follow-up.model.js"
 import { InvoiceModel } from "../models/invoice.model.js"
+import { InvoicePaymentModel } from "../models/invoice-payment.model.js"
 import { JoiningModel } from "../models/joining.model.js"
 import { RecruitmentMandateModel } from "../models/recruitment-mandate.model.js"
 import { ReplacementCaseModel } from "../models/replacement-case.model.js"
@@ -176,6 +179,24 @@ export function toPublicReplacement(doc: Record<string, unknown>) {
     eligibilityReasons: Array.isArray(doc.eligibilityReasons)
       ? doc.eligibilityReasons.map((item) => String(item))
       : [],
+    eligibilityBasis: (() => {
+      const basis = doc.eligibilityBasis && typeof doc.eligibilityBasis === "object"
+        ? doc.eligibilityBasis as Record<string, unknown>
+        : {}
+      return {
+        agreementNumber: String(basis.agreementNumber ?? ""),
+        agreementVerified: Boolean(basis.agreementVerified),
+        replacementPeriodDays: basis.replacementPeriodDays == null ? null : Number(basis.replacementPeriodDays),
+        guaranteeEndDate: dateKeyOf(basis.guaranteeEndDate),
+        guaranteeRecordMatches: Boolean(basis.guaranteeRecordMatches),
+        invoicePaymentStatus: String(basis.invoicePaymentStatus ?? "UNKNOWN"),
+        priorFreeReplacements: Number(basis.priorFreeReplacements ?? 0),
+        evaluatedAt: isoOf(basis.evaluatedAt),
+        evaluatedBy: asId(basis.evaluatedBy),
+        evidenceUrl: String(basis.evidenceUrl ?? ""),
+        reviewNotes: String(basis.reviewNotes ?? ""),
+      }
+    })(),
     freeReplacement: Boolean(doc.freeReplacement),
     exclusions:
       doc.exclusions && typeof doc.exclusions === "object"
@@ -214,7 +235,7 @@ async function assertCandidate(organizationId: string, candidateId: string) {
 async function assertMandate(organizationId: string, mandateId: string) {
   parseObjectId(mandateId, "Invalid mandate")
   const mandate = await RecruitmentMandateModel.findOne({ _id: mandateId, organizationId }).select(
-    "_id mandateNumber position status clientId replacementPeriodDays"
+    "_id mandateNumber position status clientId agreementId replacementPeriodDays"
   )
   if (!mandate) {
     throw AppError.badRequest(MESSAGES.MANDATE_NOT_FOUND)
@@ -240,6 +261,77 @@ async function assertJoining(organizationId: string, joiningId: string) {
     throw AppError.badRequest(MESSAGES.JOINING_NOT_FOUND)
   }
   return joining
+}
+
+async function calculateEligibility(input: {
+  organizationId: string
+  joining: Awaited<ReturnType<typeof assertJoining>>
+  mandate: Awaited<ReturnType<typeof assertMandate>>
+  requestedDate: Date
+  reason: ReplacementReason
+  exclusions?: CreateReplacementInput["exclusions"]
+  manualOverride: boolean
+  evidenceUrl?: string
+  reviewNotes?: string
+  reviewedBy: string
+  excludeCaseId?: string
+}) {
+  const agreement = input.mandate.agreementId
+    ? await ClientAgreementModel.findOne({ _id: input.mandate.agreementId, organizationId: input.organizationId, clientId: input.joining.clientId })
+        .select("agreementNumber status effectiveDate expiryDate signedDate signedDocument replacementPeriodDays")
+    : null
+  const signedDocument = agreement?.signedDocument as { fileUrl?: string } | undefined
+  const periodDays = Number(agreement?.replacementPeriodDays ?? input.mandate.replacementPeriodDays ?? DEFAULT_REPLACEMENT_PERIOD_DAYS)
+  const agreementVerified = Boolean(agreement && agreement.status === "ACTIVE" && agreement.signedDate && signedDocument?.fileUrl && agreement.effectiveDate <= input.requestedDate && (!agreement.expiryDate || agreement.expiryDate >= input.requestedDate))
+  const guarantee = await GuaranteeFollowUpModel.findOne({ organizationId: input.organizationId, joiningId: input.joining._id })
+    .select("guaranteeStartDate guaranteeEndDate replacementPeriodDays")
+  const expectedEndDate = new Date(input.joining.joiningDate ?? new Date())
+  expectedEndDate.setUTCDate(expectedEndDate.getUTCDate() + periodDays)
+  const mandatePeriodMatches = Number(input.mandate.replacementPeriodDays ?? periodDays) === periodDays
+  const guaranteeRecordMatches = guarantee
+    ? mandatePeriodMatches && Number(guarantee.replacementPeriodDays ?? -1) === periodDays && dateKeyOf(guarantee.guaranteeEndDate) === dateKeyOf(expectedEndDate) && dateKeyOf(input.requestedDate) >= dateKeyOf(guarantee.guaranteeStartDate) && dateKeyOf(input.requestedDate) <= dateKeyOf(guarantee.guaranteeEndDate)
+    : agreementVerified && mandatePeriodMatches
+
+  const invoices = await InvoiceModel.find({ organizationId: input.organizationId, joiningId: input.joining._id, status: { $ne: "CANCELLED" } }).select("_id outstandingAmount dueDate amount")
+  let invoicePaidOnTime: boolean | null = invoices.length ? true : null
+  if (invoices.length) {
+    const payments = await InvoicePaymentModel.find({ organizationId: input.organizationId, invoiceId: { $in: invoices.map((invoice) => invoice._id) }, status: "COMPLETED" }).select("invoiceId amount paymentDate")
+    let unknown = false
+    let late = false
+    for (const invoice of invoices) {
+      const paymentsForInvoice = payments.filter((payment) => String(payment.invoiceId) === String(invoice._id))
+      if (!invoice.dueDate || paymentsForInvoice.length === 0) { unknown = true; continue }
+      const paidByDue = paymentsForInvoice.filter((payment) => payment.paymentDate <= invoice.dueDate!).reduce((sum, payment) => sum + Number(payment.amount), 0)
+      if (paidByDue + 0.01 < Number(invoice.amount ?? 0)) {
+        if (Number(invoice.outstandingAmount ?? 0) > 0 && invoice.dueDate >= input.requestedDate) unknown = true
+        else late = true
+      }
+    }
+    invoicePaidOnTime = late ? false : unknown ? null : true
+  }
+  const priorFreeReplacements = await ReplacementCaseModel.countDocuments({ organizationId: input.organizationId, joiningId: input.joining._id, ...(input.excludeCaseId ? { _id: { $ne: input.excludeCaseId } } : {}), $or: [{ freeReplacementUsed: true }, { freeReplacement: true, status: "REPLACED" }] })
+  const eligibility = evaluateReplacementEligibility({
+    joiningDate: input.joining.joiningDate ?? new Date(), requestedDate: input.requestedDate, replacementPeriodDays: periodDays,
+    reason: input.reason, exclusions: input.exclusions, invoicePaidOnTime, freeReplacementsUsed: priorFreeReplacements,
+    maxFreeReplacements: MAX_FREE_REPLACEMENTS, manualOverride: input.manualOverride, agreementVerified, guaranteeRecordMatches,
+  })
+  const invoicePaymentStatus = (invoicePaidOnTime === true
+    ? "PAID_ON_TIME"
+    : invoicePaidOnTime === false
+      ? "LATE"
+      : invoices.length
+        ? "PENDING"
+        : "NO_INVOICE") as "PAID_ON_TIME" | "LATE" | "PENDING" | "NO_INVOICE"
+  return {
+    eligibility,
+    eligibilityBasis: {
+      agreementNumber: String(agreement?.agreementNumber ?? ""), agreementVerified, replacementPeriodDays: periodDays,
+      guaranteeEndDate: guarantee?.guaranteeEndDate ?? expectedEndDate, guaranteeRecordMatches,
+      invoicePaymentStatus,
+      priorFreeReplacements, evaluatedAt: new Date(), evaluatedBy: input.reviewedBy,
+      evidenceUrl: input.evidenceUrl ?? "", reviewNotes: input.reviewNotes ?? "",
+    },
+  }
 }
 
 async function assertNoOpenReplacement(organizationId: string, joiningId: string, excludeId?: string) {
@@ -313,6 +405,9 @@ export async function getReplacement(auth: AuthContext, id: string) {
 
 export async function createReplacement(auth: AuthContext, input: CreateReplacementInput) {
   const joining = await assertJoining(auth.organizationId, input.joiningId)
+  if (joining.status !== "JOINED") {
+    throw AppError.badRequest("Replacement eligibility can only be evaluated for a confirmed joining")
+  }
   const candidateId = input.candidateId ?? String(joining.candidateId)
   const mandateId = input.mandateId ?? String(joining.mandateId)
   const clientId = input.clientId ?? String(joining.clientId)
@@ -342,62 +437,23 @@ export async function createReplacement(auth: AuthContext, input: CreateReplacem
 
   const replacementRequestedDate =
     dateFromKey(input.replacementRequestedDate) ?? utcDateFromKey(todayKey())
-  const joiningDate = joining.joiningDate ?? new Date()
-  const replacementPeriodDays = Number(
-    mandate.replacementPeriodDays ?? DEFAULT_REPLACEMENT_PERIOD_DAYS
-  )
-
-  const invoices = await InvoiceModel.find({
-    organizationId: auth.organizationId,
-    joiningId: joining._id,
-    status: { $ne: "CANCELLED" },
-  }).select("status paidAmount outstandingAmount dueDate amount")
-
-  let invoicePaidOnTime: boolean | null = null
-  if (invoices.length) {
-    const anyOutstanding = invoices.some(
-      (invoice) =>
-        String(invoice.status) !== "PAID" && Number(invoice.outstandingAmount ?? 0) > 0
-    )
-    if (anyOutstanding) {
-      invoicePaidOnTime = false
-    } else {
-      // All settled: on-time if every invoice's dueDate is null or was not overdue when paid
-      invoicePaidOnTime = invoices.every((invoice) => {
-        if (!invoice.dueDate) return true
-        // Without payment timestamps, treat PAID with dueDate in the past as still on-time if PAID
-        return String(invoice.status) === "PAID" || Number(invoice.outstandingAmount ?? 0) <= 0
-      })
-    }
-  }
-
-  const priorFree = await ReplacementCaseModel.countDocuments({
-    organizationId: auth.organizationId,
-    joiningId: joining._id,
-    $or: [{ freeReplacement: true }, { freeReplacementUsed: true }],
-  })
-
   const exclusions = input.exclusions ?? {}
   const manualOverride = Boolean(input.manualOverride)
-  const eligibility = evaluateReplacementEligibility({
-    joiningDate,
-    requestedDate: replacementRequestedDate,
-    replacementPeriodDays,
-    reason: input.replacementReason,
-    exclusions,
-    invoicePaidOnTime,
-    freeReplacementsUsed: priorFree,
-    maxFreeReplacements: MAX_FREE_REPLACEMENTS,
-    manualOverride,
+  if (manualOverride && !["SUPER_ADMIN", "HR_ADMIN"].includes(auth.role)) {
+    throw AppError.forbidden("Only HR admins or super admins can override replacement eligibility")
+  }
+  if (manualOverride && (!input.eligibilityReviewNotes?.trim() || !input.eligibilityEvidenceUrl?.trim())) {
+    throw AppError.badRequest("An override requires review notes and supporting evidence")
+  }
+  const { eligibility, eligibilityBasis } = await calculateEligibility({
+    organizationId: auth.organizationId, joining, mandate, requestedDate: replacementRequestedDate,
+    reason: input.replacementReason, exclusions, manualOverride,
+    evidenceUrl: input.eligibilityEvidenceUrl, reviewNotes: input.eligibilityReviewNotes, reviewedBy: auth.userId,
   })
 
-  if (eligibility.result === "NOT_ELIGIBLE" && !manualOverride) {
-    throw AppError.badRequest(MESSAGES.REPLACEMENT_NOT_ELIGIBLE)
-  }
-
   let status = resolveStatus(input.status, Boolean(replacementCandidateId))
-  if (eligibility.result === "REVIEW" && !manualOverride && !input.status) {
-    status = "REPLACEMENT_REQUESTED"
+  if (eligibility.result !== "APPROVED" && !manualOverride && status !== "REPLACEMENT_REQUESTED") {
+    throw AppError.badRequest("A replacement with unresolved eligibility must remain in Requested status")
   }
   if (status === "REPLACED" && !replacementCandidateId) {
     throw AppError.badRequest(MESSAGES.REPLACEMENT_CANDIDATE_REQUIRED)
@@ -424,8 +480,9 @@ export async function createReplacement(auth: AuthContext, input: CreateReplacem
       closedAt,
       eligibilityResult: eligibility.result,
       eligibilityReasons: eligibility.reasons,
-      freeReplacement: eligibility.result === "APPROVED" && eligibility.freeReplacementAvailable,
-      freeReplacementUsed: false,
+      eligibilityBasis,
+      freeReplacement: eligibility.result === "APPROVED" && eligibility.reasons.length === 1 && eligibility.reasons[0] === "Eligible for one free replacement within guarantee period" && eligibility.freeReplacementAvailable,
+      freeReplacementUsed: status === "REPLACED" && eligibility.result === "APPROVED" && eligibility.reasons.length === 1 && eligibility.reasons[0] === "Eligible for one free replacement within guarantee period" && eligibility.freeReplacementAvailable,
       manualOverride,
       exclusions,
       remarks: input.remarks ?? "",
@@ -464,6 +521,7 @@ export async function createReplacement(auth: AuthContext, input: CreateReplacem
 
 export async function updateReplacement(auth: AuthContext, id: string, input: UpdateReplacementInput) {
   const replacement = await requireReplacement(auth.organizationId, id)
+  const previousData = toPublicReplacement(replacement.toObject() as Record<string, unknown>)
 
   if (input.joiningId !== undefined) {
     const joining = await assertJoining(auth.organizationId, input.joiningId)
@@ -502,6 +560,8 @@ export async function updateReplacement(auth: AuthContext, id: string, input: Up
       dateFromKey(input.replacementRequestedDate) ?? replacement.replacementRequestedDate
   }
   if (input.remarks !== undefined) replacement.remarks = input.remarks
+  if (input.exclusions !== undefined) replacement.set("exclusions", input.exclusions)
+  if (input.manualOverride !== undefined) replacement.manualOverride = input.manualOverride
 
   if (input.replacementCandidateId !== undefined) {
     if (!input.replacementCandidateId) {
@@ -520,10 +580,42 @@ export async function updateReplacement(auth: AuthContext, id: string, input: Up
 
   const hasReplacementCandidate = Boolean(asId(replacement.replacementCandidateId))
   const status = resolveStatus(input.status ?? (replacement.status as ReplacementStatus), hasReplacementCandidate)
+  const manualOverride = Boolean(replacement.manualOverride)
+  if (manualOverride && !["SUPER_ADMIN", "HR_ADMIN"].includes(auth.role)) {
+    throw AppError.forbidden("Only HR admins or super admins can override replacement eligibility")
+  }
+  const priorBasis = (replacement.toObject() as { eligibilityBasis?: { evidenceUrl?: string; reviewNotes?: string } }).eligibilityBasis
+  const evidenceUrl = input.eligibilityEvidenceUrl ?? priorBasis?.evidenceUrl ?? ""
+  const reviewNotes = input.eligibilityReviewNotes ?? priorBasis?.reviewNotes ?? ""
+  if (input.eligibilityEvidenceUrl !== undefined || input.eligibilityReviewNotes !== undefined || manualOverride) {
+    if (input.eligibilityEvidenceUrl !== undefined || input.eligibilityReviewNotes !== undefined) {
+      replacement.set("eligibilityBasis.evidenceUrl", evidenceUrl)
+      replacement.set("eligibilityBasis.reviewNotes", reviewNotes)
+    }
+  }
+  if (manualOverride && (!reviewNotes.trim() || !evidenceUrl.trim())) {
+    throw AppError.badRequest("An override requires review notes and supporting evidence")
+  }
+  const mandate = await assertMandate(auth.organizationId, asId(replacement.mandateId))
+  const requestedDate = replacement.replacementRequestedDate ?? new Date()
+  const { eligibility, eligibilityBasis } = await calculateEligibility({
+    organizationId: auth.organizationId, joining, mandate, requestedDate,
+    reason: replacement.replacementReason as ReplacementReason,
+    exclusions: replacement.exclusions as CreateReplacementInput["exclusions"],
+    manualOverride, evidenceUrl, reviewNotes, reviewedBy: auth.userId, excludeCaseId: id,
+  })
+  if (eligibility.result !== "APPROVED" && !manualOverride && status !== "REPLACEMENT_REQUESTED") {
+    throw AppError.badRequest("A replacement with unresolved eligibility must remain in Requested status")
+  }
   if (status === "REPLACED" && !hasReplacementCandidate) {
     throw AppError.badRequest(MESSAGES.REPLACEMENT_CANDIDATE_REQUIRED)
   }
   replacement.status = status
+  replacement.eligibilityResult = eligibility.result
+  replacement.set("eligibilityReasons", eligibility.reasons)
+  replacement.set("eligibilityBasis", eligibilityBasis)
+  replacement.freeReplacement = eligibility.result === "APPROVED" && eligibility.reasons.length === 1 && eligibility.reasons[0] === "Eligible for one free replacement within guarantee period" && eligibility.freeReplacementAvailable
+  if (status === "REPLACED" && replacement.freeReplacement) replacement.freeReplacementUsed = true
   replacement.closedAt = resolveClosedAt(
     status,
     input.closedAt,
@@ -544,7 +636,15 @@ export async function updateReplacement(auth: AuthContext, id: string, input: Up
   }
 
   await replacement.populate([...REPLACEMENT_POPULATE])
-  return toPublicReplacement(replacement.toObject() as Record<string, unknown>)
+  const publicReplacement = toPublicReplacement(replacement.toObject() as Record<string, unknown>)
+  await recordAudit(auth, {
+    module: "REPLACEMENTS",
+    action: "UPDATED",
+    recordId: publicReplacement.id,
+    previousData,
+    newData: publicReplacement,
+  })
+  return publicReplacement
 }
 
 export async function deleteReplacement(auth: AuthContext, id: string) {

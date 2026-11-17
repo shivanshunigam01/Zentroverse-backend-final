@@ -84,8 +84,8 @@ export declare const evaluationListQuerySchema: z.ZodObject<{
     q: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     sort: z.ZodOptional<z.ZodEnum<{
         createdAt: "createdAt";
-        recommendation: "recommendation";
         evaluatedAt: "evaluatedAt";
+        recommendation: "recommendation";
     }>>;
     order: z.ZodOptional<z.ZodEnum<{
         asc: "asc";

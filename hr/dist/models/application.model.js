@@ -36,6 +36,11 @@ const applicationSchema = new Schema({
         maxlength: 4000,
         default: "",
     },
+    consentStatement: { type: String, trim: true, maxlength: 2000, default: "" },
+    consentVersion: { type: String, trim: true, maxlength: 40, default: "" },
+    consentConfirmed: { type: Boolean, default: false },
+    consentRecordedAt: { type: Date, default: null },
+    consentMethod: { type: String, trim: true, default: "" },
     sortOrder: {
         type: Number,
         default: 0,

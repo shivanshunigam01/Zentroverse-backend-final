@@ -43,6 +43,8 @@ function hasExclusion(exclusions) {
         hits.push("Unsafe or unlawful working conditions");
     if (exclusions.clientMisconduct)
         hits.push("Client misconduct");
+    if (exclusions.otherClientCaused)
+        hits.push("Other client-caused condition");
     return hits;
 }
 /**
@@ -58,6 +60,12 @@ export function evaluateReplacementEligibility(input) {
     const withinGuaranteePeriod = elapsed >= 0 && elapsed <= periodMs;
     if (!withinGuaranteePeriod) {
         reasons.push("Request is outside the replacement guarantee period");
+    }
+    if (input.agreementVerified === false) {
+        reasons.push("A valid executed agreement covering the request date could not be verified");
+    }
+    if (input.guaranteeRecordMatches === false) {
+        reasons.push("Guarantee tracking dates do not match the signed replacement terms");
     }
     if (!freeReplacementAvailable && !input.manualOverride) {
         reasons.push("One free replacement has already been used");
@@ -104,11 +112,13 @@ export function evaluateReplacementEligibility(input) {
         };
     }
     if (input.invoicePaidOnTime === false ||
+        input.agreementVerified === false ||
+        input.guaranteeRecordMatches === false ||
         input.reason === "CLIENT_REQUEST" ||
         input.reason === "OTHER" ||
         input.invoicePaidOnTime === null ||
         input.invoicePaidOnTime === undefined) {
-        if (!eligibleReasonSet.has(input.reason) || input.invoicePaidOnTime !== true) {
+        if (!eligibleReasonSet.has(input.reason) || input.invoicePaidOnTime !== true || input.agreementVerified !== true || input.guaranteeRecordMatches === false) {
             return {
                 result: "REVIEW",
                 reasons: reasons.length ? reasons : ["Requires manual review"],

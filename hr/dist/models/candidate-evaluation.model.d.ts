@@ -5,6 +5,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -28,7 +29,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
 } & mongoose.DefaultTimestampProps, {}, {}, {
     id: string;
 }, mongoose.Document<unknown, {}, {
@@ -37,6 +37,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -60,7 +61,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
 } & mongoose.DefaultTimestampProps, {
     id: string;
 }, {
@@ -71,6 +71,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -94,7 +95,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
 } & {
@@ -109,6 +109,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -132,13 +133,13 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
     organizationId: mongoose.Types.ObjectId;
     strengths: string[];
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -162,7 +163,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
 } & mongoose.DefaultTimestampProps, {
     id: string;
 }, Omit<mongoose.DefaultSchemaOptions, "timestamps"> & {
@@ -173,6 +173,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -196,7 +197,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
 } & {
@@ -209,6 +209,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -232,7 +233,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
     createdAt: NativeDate;
     updatedAt: NativeDate;
 } & {
@@ -245,6 +245,7 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     candidateId: mongoose.Types.ObjectId;
     mandateId: mongoose.Types.ObjectId;
     remarks: string;
+    evaluatedAt: NativeDate;
     recruiterId: mongoose.Types.ObjectId;
     scoringVersion: "LEGACY_6" | "POINT_100";
     scores: {
@@ -268,7 +269,6 @@ export declare const CandidateEvaluationModel: mongoose.Model<{
     totalScore: number;
     recommendation: "STRONG_RECOMMEND" | "RECOMMEND" | "HOLD" | "REJECT" | "STRONGLY_RECOMMENDED" | "RECOMMENDED" | "NOT_RECOMMENDED";
     concerns: string[];
-    evaluatedAt: NativeDate;
     createdAt: NativeDate;
     updatedAt: NativeDate;
 } & {

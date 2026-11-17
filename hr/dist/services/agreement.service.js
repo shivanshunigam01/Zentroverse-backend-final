@@ -15,6 +15,7 @@ import { applySearch, mongoSort, resolvedSearch } from "../utils/search.js";
 const AGREEMENT_POPULATE = [
     { path: "clientId", select: "companyName status industry" },
     { path: "createdBy", select: "name email role" },
+    { path: "agencySignature.userId", select: "name email role" },
 ];
 function asId(value) {
     if (!value)
@@ -77,6 +78,24 @@ function toSignedDocument(value) {
         fileName: String(doc.fileName ?? ""),
     };
 }
+function toSignature(value) {
+    if (!value || typeof value !== "object")
+        return null;
+    const signature = value;
+    const name = String(signature.name ?? "").trim();
+    const typedName = String(signature.typedName ?? "").trim();
+    const signedAt = isoOf(signature.signedAt);
+    if (!name || !typedName || !signedAt)
+        return null;
+    return {
+        name,
+        title: String(signature.title ?? ""),
+        email: String(signature.email ?? ""),
+        typedName,
+        consentConfirmed: signature.consentConfirmed === true,
+        signedAt,
+    };
+}
 function commercialOf(value) {
     const source = value && typeof value === "object" ? value : {};
     const feeType = String(source.feeType ?? "PERCENTAGE") || "PERCENTAGE";
@@ -122,6 +141,19 @@ export function toPublicAgreement(doc) {
         storedStatus,
         statusLabel: AGREEMENT_STATUS_LABELS[status] ?? status,
         signedDocument: toSignedDocument(doc.signedDocument),
+        agreementText: String(doc.agreementText ?? ""),
+        additionalTerms: String(doc.additionalTerms ?? ""),
+        clientSignature: toSignature(doc.clientSignature),
+        agencySignature: (() => {
+            const signature = doc.agencySignature && typeof doc.agencySignature === "object"
+                ? doc.agencySignature
+                : {};
+            const signedAt = isoOf(signature.signedAt);
+            if (!signedAt)
+                return null;
+            const signer = toUserRef(signature.userId);
+            return { signer, signedAt, authorityConfirmed: signature.authorityConfirmed === true };
+        })(),
         createdBy: toUserRef(doc.createdBy),
         createdAt: isoOf(doc.createdAt),
         updatedAt: isoOf(doc.updatedAt),
@@ -189,7 +221,9 @@ async function createAgreementDocument(auth, input) {
     const agreementNumber = await generateAgreementNumber(auth.organizationId);
     const effectiveDate = dateFromKey(input.effectiveDate);
     const status = input.status ?? "DRAFT";
-    const signedDate = statusWithSignedDate(status, dateFromKey(input.signedDate), effectiveDate);
+    const signedDate = status === "ACTIVE"
+        ? new Date()
+        : statusWithSignedDate(status, dateFromKey(input.signedDate), effectiveDate);
     return ClientAgreementModel.create({
         organizationId: auth.organizationId,
         clientId: client._id,
@@ -204,6 +238,17 @@ async function createAgreementDocument(auth, input) {
         replacementPeriodDays: input.replacementPeriodDays ?? DEFAULT_REPLACEMENT_PERIOD_DAYS,
         status,
         signedDocument: signedDocumentOf(input.signedDocument),
+        agreementText: (input.agreementText ?? "").replaceAll("[Agreement number assigned on save]", agreementNumber),
+        additionalTerms: input.additionalTerms ?? "",
+        clientSignature: input.status === "ACTIVE" ? {
+            name: input.clientSignature?.name ?? "",
+            title: input.clientSignature?.title ?? "",
+            email: input.clientSignature?.email ?? "",
+            typedName: input.clientSignature?.typedName ?? "",
+            consentConfirmed: input.clientSignature?.consentConfirmed === true,
+            signedAt: new Date(),
+        } : undefined,
+        agencySignature: input.status === "ACTIVE" ? { userId: auth.userId, authorityConfirmed: true, signedAt: new Date() } : undefined,
     });
 }
 export async function listAgreements(auth, query) {
@@ -261,6 +306,25 @@ export async function createAgreement(auth, input) {
 }
 export async function updateAgreement(auth, id, input) {
     const agreement = await requireAgreement(auth.organizationId, id);
+    const previousData = toPublicAgreement(agreement.toObject());
+    const hasExecutionSignatures = Boolean(agreement.get("agencySignature.signedAt") || agreement.get("clientSignature.signedAt"));
+    if (agreement.status === "ACTIVE" || hasExecutionSignatures) {
+        if (input.status !== "TERMINATED") {
+            throw AppError.conflict("Executed agreements are locked. Create a new agreement for amended terms, or terminate this agreement.");
+        }
+        agreement.status = "TERMINATED";
+        await agreement.save();
+        await agreement.populate([...AGREEMENT_POPULATE]);
+        const terminated = toPublicAgreement(agreement.toObject());
+        await recordAudit(auth, {
+            module: "AGREEMENTS",
+            action: "UPDATED",
+            recordId: terminated.id,
+            previousData,
+            newData: terminated,
+        });
+        return terminated;
+    }
     if (input.clientId !== undefined) {
         const client = await assertClient(auth.organizationId, input.clientId);
         agreement.set("clientId", client._id);
@@ -279,6 +343,8 @@ export async function updateAgreement(auth, id, input) {
             recruitmentFee: input.commercialTerms.recruitmentFee ?? agreement.commercialTerms.recruitmentFee,
             feeType: input.commercialTerms.feeType ?? agreement.commercialTerms.feeType,
             paymentTermsDays: input.commercialTerms.paymentTermsDays ?? agreement.commercialTerms.paymentTermsDays,
+            gstRatePercent: input.commercialTerms.gstRatePercent ?? agreement.commercialTerms.gstRatePercent,
+            gstSplitMode: input.commercialTerms.gstSplitMode ?? agreement.commercialTerms.gstSplitMode,
         });
     }
     if (input.ownershipPeriodMonths !== undefined) {
@@ -292,16 +358,40 @@ export async function updateAgreement(auth, id, input) {
     }
     if (input.status !== undefined) {
         agreement.status = input.status;
-        if (input.status === "ACTIVE" && !agreement.signedDate) {
-            agreement.signedDate = agreement.effectiveDate;
+        if (input.status === "ACTIVE") {
+            if (!input.clientSignature || !(input.agreementText ?? agreement.agreementText)?.trim()) {
+                throw AppError.badRequest("A reviewed agreement and client signature are required before activation");
+            }
+            agreement.set("clientSignature", {
+                name: input.clientSignature.name,
+                title: input.clientSignature.title ?? "",
+                email: input.clientSignature.email,
+                typedName: input.clientSignature.typedName,
+                consentConfirmed: input.clientSignature.consentConfirmed,
+                signedAt: new Date(),
+            });
+            agreement.set("agencySignature", { userId: auth.userId, authorityConfirmed: input.agencySignatureConfirmed === true, signedAt: new Date() });
+            agreement.signedDate = new Date();
         }
     }
+    if (input.agreementText !== undefined)
+        agreement.agreementText = input.agreementText;
+    if (input.additionalTerms !== undefined)
+        agreement.additionalTerms = input.additionalTerms;
     if (input.signedDocument !== undefined) {
         agreement.set("signedDocument", signedDocumentOf(input.signedDocument));
     }
     await agreement.save();
     await agreement.populate([...AGREEMENT_POPULATE]);
-    return toPublicAgreement(agreement.toObject());
+    const publicAgreement = toPublicAgreement(agreement.toObject());
+    await recordAudit(auth, {
+        module: "AGREEMENTS",
+        action: "UPDATED",
+        recordId: publicAgreement.id,
+        previousData,
+        newData: publicAgreement,
+    });
+    return publicAgreement;
 }
 export async function deleteAgreement(auth, id) {
     parseObjectId(id);

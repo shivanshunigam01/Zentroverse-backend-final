@@ -119,6 +119,10 @@ export async function mountPeopleflow(app) {
 
   const routesMod = await import(hrDistFile("routes/index.js"));
   const errorMod = await import(hrDistFile("middleware/error-handler.js"));
+  const reminderMod = await import(hrDistFile("jobs/interview-feedback-reminders.js"));
+  reminderMod.startInterviewFeedbackReminders();
+  const placementReminderMod = await import(hrDistFile("jobs/placement-reminders.js"));
+  placementReminderMod.startPlacementReminders();
 
   peopleflowErrorHandler = errorMod.errorHandler;
   const peopleflowRouter = routesMod.createApiRouter();

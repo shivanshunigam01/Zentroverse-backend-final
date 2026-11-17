@@ -27,8 +27,23 @@ export declare function toPublicClient(doc: Record<string, unknown>): {
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    kycEvidence: {
+        id: string;
+        documentType: string;
+        fileName: string;
+        evidenceUrl: string;
+        status: string;
+        reviewNotes: string;
+        reviewedAt: string;
+        reviewedBy: {
+            id: string;
+            name: string;
+            email: string;
+        } | null;
+    }[];
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -76,8 +91,23 @@ export declare function listClients(auth: AuthContext, query: ClientListQueryInp
         onboardingStatusLabel: string;
         KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
         KYCStatusLabel: string;
+        kycEvidence: {
+            id: string;
+            documentType: string;
+            fileName: string;
+            evidenceUrl: string;
+            status: string;
+            reviewNotes: string;
+            reviewedAt: string;
+            reviewedBy: {
+                id: string;
+                name: string;
+                email: string;
+            } | null;
+        }[];
         invoiceSubmissionProcess: string;
         purchaseOrderRequired: boolean;
+        purchaseOrderRequirements: string;
         vendorCode: string;
         paymentCycleDays: number;
         authorizedSignatory: string;
@@ -121,8 +151,23 @@ export declare function getClient(auth: AuthContext, id: string): Promise<{
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    kycEvidence: {
+        id: string;
+        documentType: string;
+        fileName: string;
+        evidenceUrl: string;
+        status: string;
+        reviewNotes: string;
+        reviewedAt: string;
+        reviewedBy: {
+            id: string;
+            name: string;
+            email: string;
+        } | null;
+    }[];
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -165,8 +210,23 @@ export declare function createClient(auth: AuthContext, input: CreateClientInput
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    kycEvidence: {
+        id: string;
+        documentType: string;
+        fileName: string;
+        evidenceUrl: string;
+        status: string;
+        reviewNotes: string;
+        reviewedAt: string;
+        reviewedBy: {
+            id: string;
+            name: string;
+            email: string;
+        } | null;
+    }[];
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;
@@ -209,8 +269,23 @@ export declare function updateClient(auth: AuthContext, id: string, input: Updat
     onboardingStatusLabel: string;
     KYCStatus: "REJECTED" | "PENDING" | "VERIFIED";
     KYCStatusLabel: string;
+    kycEvidence: {
+        id: string;
+        documentType: string;
+        fileName: string;
+        evidenceUrl: string;
+        status: string;
+        reviewNotes: string;
+        reviewedAt: string;
+        reviewedBy: {
+            id: string;
+            name: string;
+            email: string;
+        } | null;
+    }[];
     invoiceSubmissionProcess: string;
     purchaseOrderRequired: boolean;
+    purchaseOrderRequirements: string;
     vendorCode: string;
     paymentCycleDays: number;
     authorizedSignatory: string;

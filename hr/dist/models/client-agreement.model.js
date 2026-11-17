@@ -82,6 +82,21 @@ const clientAgreementSchema = new Schema({
         type: signedDocumentSchema,
         default: null,
     },
+    agreementText: { type: String, trim: true, maxlength: 20000, default: "" },
+    additionalTerms: { type: String, trim: true, maxlength: 5000, default: "" },
+    clientSignature: {
+        name: { type: String, trim: true, maxlength: 160, default: "" },
+        title: { type: String, trim: true, maxlength: 160, default: "" },
+        email: { type: String, trim: true, lowercase: true, maxlength: 160, default: "" },
+        typedName: { type: String, trim: true, maxlength: 160, default: "" },
+        consentConfirmed: { type: Boolean, default: false },
+        signedAt: { type: Date, default: null },
+    },
+    agencySignature: {
+        userId: { type: Schema.Types.ObjectId, ref: "User", default: null },
+        authorityConfirmed: { type: Boolean, default: false },
+        signedAt: { type: Date, default: null },
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: "User",

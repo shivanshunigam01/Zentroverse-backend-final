@@ -31,6 +31,8 @@ export declare const publicCareerApplySchema: z.ZodObject<{
     linkedInUrl: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     notes: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;
     consent: z.ZodPreprocess<z.ZodBoolean>;
+    consentStatement: z.ZodString;
+    consentVersion: z.ZodLiteral<"2026-11-v2">;
 }, z.core.$strip>;
 export declare const jobApplicationListQuerySchema: z.ZodObject<{
     search: z.ZodPipe<z.ZodOptional<z.ZodString>, z.ZodTransform<string | undefined, string | undefined>>;

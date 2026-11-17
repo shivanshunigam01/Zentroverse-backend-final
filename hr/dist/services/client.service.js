@@ -14,7 +14,10 @@ import { AppError } from "../utils/app-error.js";
 import { parseObjectId } from "../utils/object-id.js";
 import { paginationMeta, paginationSkip } from "../utils/pagination.js";
 import { applySearch, mongoSort, resolvedSearch } from "../utils/search.js";
-const CREATED_BY_POPULATE = { path: "createdBy", select: "name email" };
+const CLIENT_POPULATE = [
+    { path: "createdBy", select: "name email" },
+    { path: "kycEvidence.reviewedBy", select: "name email" },
+];
 function asId(value) {
     if (!value)
         return "";
@@ -44,6 +47,24 @@ function toContactPerson(value) {
         designation: String(person.designation ?? ""),
         email: String(person.email ?? ""),
         phone: String(person.phone ?? ""),
+    };
+}
+function toKycEvidence(value) {
+    if (!value || typeof value !== "object")
+        return null;
+    const evidence = value;
+    const reviewer = evidence.reviewedBy && typeof evidence.reviewedBy === "object"
+        ? evidence.reviewedBy
+        : null;
+    return {
+        id: String(evidence._id ?? evidence.id ?? ""),
+        documentType: String(evidence.documentType ?? ""),
+        fileName: String(evidence.fileName ?? ""),
+        evidenceUrl: String(evidence.evidenceUrl ?? ""),
+        status: String(evidence.status ?? "PENDING"),
+        reviewNotes: String(evidence.reviewNotes ?? ""),
+        reviewedAt: isoOf(evidence.reviewedAt),
+        reviewedBy: reviewer ? { id: String(reviewer._id ?? ""), name: String(reviewer.name ?? ""), email: String(reviewer.email ?? "") } : null,
     };
 }
 function toCreatedBy(value) {
@@ -89,8 +110,12 @@ export function toPublicClient(doc) {
         onboardingStatusLabel: CLIENT_ONBOARDING_LABELS[onboardingStatus] ?? onboardingStatus,
         KYCStatus,
         KYCStatusLabel: CLIENT_KYC_LABELS[KYCStatus] ?? KYCStatus,
+        kycEvidence: Array.isArray(doc.kycEvidence)
+            ? doc.kycEvidence.map(toKycEvidence).filter((item) => item !== null)
+            : [],
         invoiceSubmissionProcess: String(doc.invoiceSubmissionProcess ?? ""),
         purchaseOrderRequired: Boolean(doc.purchaseOrderRequired),
+        purchaseOrderRequirements: String(doc.purchaseOrderRequirements ?? ""),
         vendorCode: String(doc.vendorCode ?? ""),
         paymentCycleDays: Number(doc.paymentCycleDays ?? 30),
         authorizedSignatory: String(doc.authorizedSignatory ?? ""),
@@ -105,7 +130,7 @@ export function toPublicClient(doc) {
 }
 async function requireClient(organizationId, id) {
     parseObjectId(id);
-    const client = await ClientModel.findOne({ _id: id, organizationId }).populate(CREATED_BY_POPULATE);
+    const client = await ClientModel.findOne({ _id: id, organizationId }).populate([...CLIENT_POPULATE]);
     if (!client) {
         throw AppError.notFound(MESSAGES.CLIENT_NOT_FOUND);
     }
@@ -142,6 +167,28 @@ function throwDuplicate(error) {
 function addressOf(input) {
     return input.registeredAddress ?? input.address ?? "";
 }
+function assertOnboardingComplete(client) {
+    const missing = [];
+    if (client.KYCStatus !== "VERIFIED")
+        missing.push("KYC verification");
+    if (!client.kycEvidence?.some((item) => item.status === "VERIFIED" && item.evidenceUrl)) {
+        missing.push("reviewed KYC evidence document");
+    }
+    if (!client.termsApproved)
+        missing.push("KYC and commercial terms approval");
+    if (!client.invoiceSubmissionProcess?.trim())
+        missing.push("invoice submission process");
+    if (!client.authorizedSignatory?.trim())
+        missing.push("authorized signatory");
+    if (!client.escalationContact?.trim())
+        missing.push("escalation contact");
+    if (client.purchaseOrderRequired && !client.purchaseOrderRequirements?.trim()) {
+        missing.push("PO/vendor-code requirements");
+    }
+    if (missing.length) {
+        throw AppError.badRequest(`Complete client onboarding checklist: ${missing.join(", ")}`);
+    }
+}
 export async function listClients(auth, query) {
     const filter = { organizationId: auth.organizationId };
     if (query.status) {
@@ -156,7 +203,7 @@ export async function listClients(auth, query) {
     applySearch(filter, ["companyName", "legalEntityName", "GSTNumber", "PANNumber", "city"], resolvedSearch(query));
     const [items, total] = await Promise.all([
         ClientModel.find(filter)
-            .populate(CREATED_BY_POPULATE)
+            .populate([...CLIENT_POPULATE])
             .sort(mongoSort(query, { createdAt: -1 }))
             .skip(paginationSkip(query))
             .limit(query.limit)
@@ -174,6 +221,15 @@ export async function getClient(auth, id) {
 }
 export async function createClient(auth, input) {
     const address = addressOf(input);
+    const isKycReviewer = auth.role === "HR_ADMIN" || auth.role === "SUPER_ADMIN";
+    if (!isKycReviewer && (input.KYCStatus === "VERIFIED" || input.kycEvidence?.some((item) => item.status === "VERIFIED" || item.status === "REJECTED"))) {
+        throw AppError.forbidden("Only HR admins or super admins can review KYC evidence");
+    }
+    if (input.KYCStatus === "VERIFIED" && !input.kycEvidence?.some((item) => item.status === "VERIFIED" && item.evidenceUrl)) {
+        throw AppError.badRequest("Add and verify at least one KYC evidence document before marking KYC verified");
+    }
+    if (input.onboardingStatus === "COMPLETED")
+        assertOnboardingComplete(input);
     try {
         const created = await ClientModel.create({
             organizationId: auth.organizationId,
@@ -192,8 +248,15 @@ export async function createClient(auth, input) {
             status: input.status ?? "LEAD",
             onboardingStatus: input.onboardingStatus ?? "PENDING",
             KYCStatus: input.KYCStatus ?? "PENDING",
+            kycEvidence: (input.kycEvidence ?? []).map((item) => ({
+                ...item,
+                status: isKycReviewer ? item.status ?? "PENDING" : "PENDING",
+                reviewedAt: isKycReviewer && item.status === "VERIFIED" ? new Date() : null,
+                reviewedBy: isKycReviewer && item.status === "VERIFIED" ? auth.userId : null,
+            })),
             invoiceSubmissionProcess: input.invoiceSubmissionProcess ?? "",
             purchaseOrderRequired: input.purchaseOrderRequired ?? false,
+            purchaseOrderRequirements: input.purchaseOrderRequirements ?? "",
             vendorCode: input.vendorCode ?? "",
             paymentCycleDays: input.paymentCycleDays ?? 30,
             authorizedSignatory: input.authorizedSignatory ?? "",
@@ -205,7 +268,7 @@ export async function createClient(auth, input) {
             notes: input.notes ?? "",
             createdBy: auth.userId,
         });
-        await created.populate(CREATED_BY_POPULATE);
+        await created.populate([...CLIENT_POPULATE]);
         const publicClient = toPublicClient(created.toObject());
         await recordActivity(auth.organizationId, {
             title: `${created.companyName} added as a client`,
@@ -257,12 +320,46 @@ export async function updateClient(auth, id, input) {
         client.status = input.status;
     if (input.onboardingStatus !== undefined)
         client.onboardingStatus = input.onboardingStatus;
-    if (input.KYCStatus !== undefined)
+    if (input.KYCStatus !== undefined) {
+        if (input.KYCStatus === "VERIFIED" && client.KYCStatus !== "VERIFIED" && auth.role !== "HR_ADMIN" && auth.role !== "SUPER_ADMIN") {
+            throw AppError.forbidden("Only HR admins or super admins can verify client KYC");
+        }
         client.KYCStatus = input.KYCStatus;
+    }
+    if (input.kycEvidence !== undefined) {
+        const isKycReviewer = auth.role === "HR_ADMIN" || auth.role === "SUPER_ADMIN";
+        const oldRows = new Map((client.kycEvidence ?? []).map((row) => [String(row._id), row]));
+        const attemptsNewReview = input.kycEvidence.some((item) => {
+            if (item.status !== "VERIFIED" && item.status !== "REJECTED")
+                return false;
+            const old = oldRows.get(item.id ?? "");
+            return !old || old.status !== item.status || String(old.evidenceUrl) !== item.evidenceUrl;
+        });
+        if (!isKycReviewer && attemptsNewReview) {
+            throw AppError.forbidden("Only HR admins or super admins can review KYC evidence");
+        }
+        client.set("kycEvidence", input.kycEvidence.map((item) => {
+            const old = oldRows.get(item.id ?? "");
+            const canPreserveReview = Boolean(!isKycReviewer && old && old.status === item.status && String(old.evidenceUrl) === item.evidenceUrl);
+            const status = isKycReviewer ? item.status ?? "PENDING" : canPreserveReview ? String(old?.status) : "PENDING";
+            const approved = isKycReviewer && status === "VERIFIED";
+            return {
+                documentType: item.documentType,
+                fileName: item.fileName ?? "",
+                evidenceUrl: item.evidenceUrl,
+                status,
+                reviewNotes: item.reviewNotes ?? "",
+                reviewedAt: approved ? new Date() : canPreserveReview ? old?.reviewedAt ?? null : null,
+                reviewedBy: approved ? auth.userId : canPreserveReview ? old?.reviewedBy ?? null : null,
+            };
+        }));
+    }
     if (input.invoiceSubmissionProcess !== undefined)
         client.invoiceSubmissionProcess = input.invoiceSubmissionProcess ?? "";
     if (input.purchaseOrderRequired !== undefined)
         client.purchaseOrderRequired = input.purchaseOrderRequired;
+    if (input.purchaseOrderRequirements !== undefined)
+        client.purchaseOrderRequirements = input.purchaseOrderRequirements ?? "";
     if (input.vendorCode !== undefined)
         client.vendorCode = input.vendorCode ?? "";
     if (input.paymentCycleDays !== undefined)
@@ -282,13 +379,18 @@ export async function updateClient(auth, id, input) {
     }
     if (input.notes !== undefined)
         client.notes = input.notes ?? "";
+    if (client.KYCStatus === "VERIFIED" && !client.kycEvidence?.some((item) => item.status === "VERIFIED" && item.evidenceUrl && item.reviewedAt && item.reviewedBy)) {
+        throw AppError.badRequest("KYC can be verified only after an HR admin approves linked evidence");
+    }
+    if (client.onboardingStatus === "COMPLETED")
+        assertOnboardingComplete(client);
     try {
         await client.save();
     }
     catch (error) {
         throwDuplicate(error);
     }
-    await client.populate(CREATED_BY_POPULATE);
+    await client.populate([...CLIENT_POPULATE]);
     const publicClient = toPublicClient(client.toObject());
     await recordAudit(auth, {
         module: "CLIENTS",

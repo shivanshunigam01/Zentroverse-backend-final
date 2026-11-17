@@ -76,6 +76,22 @@ const replacementCaseSchema = new Schema(
       type: [String],
       default: [],
     },
+    eligibilityBasis: {
+      type: new Schema({
+        agreementNumber: { type: String, trim: true, default: "" },
+        agreementVerified: { type: Boolean, default: false },
+        replacementPeriodDays: { type: Number, default: null },
+        guaranteeEndDate: { type: Date, default: null },
+        guaranteeRecordMatches: { type: Boolean, default: false },
+        invoicePaymentStatus: { type: String, enum: ["PAID_ON_TIME", "LATE", "PENDING", "NO_INVOICE", "UNKNOWN"], default: "UNKNOWN" },
+        priorFreeReplacements: { type: Number, min: 0, default: 0 },
+        evaluatedAt: { type: Date, default: null },
+        evaluatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+        evidenceUrl: { type: String, trim: true, maxlength: 500, default: "" },
+        reviewNotes: { type: String, trim: true, maxlength: 4000, default: "" },
+      }, { _id: false }),
+      default: () => ({}),
+    },
     freeReplacement: {
       type: Boolean,
       default: false,
@@ -110,6 +126,7 @@ const replacementCaseSchema = new Schema(
           restructuring: { type: Boolean, default: false },
           unsafeConditions: { type: Boolean, default: false },
           clientMisconduct: { type: Boolean, default: false },
+          otherClientCaused: { type: Boolean, default: false },
         },
         { _id: false }
       ),

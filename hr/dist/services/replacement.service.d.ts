@@ -43,6 +43,19 @@ export declare function toPublicReplacement(doc: Record<string, unknown>): {
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityResultLabel: string;
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        agreementVerified: boolean;
+        replacementPeriodDays: number | null;
+        guaranteeEndDate: string;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: string;
+        priorFreeReplacements: number;
+        evaluatedAt: string;
+        evaluatedBy: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+    };
     freeReplacement: boolean;
     exclusions: Record<string, boolean>;
     manualOverride: boolean;
@@ -99,6 +112,19 @@ export declare function listReplacements(auth: AuthContext, query: ReplacementLi
         eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
         eligibilityResultLabel: string;
         eligibilityReasons: string[];
+        eligibilityBasis: {
+            agreementNumber: string;
+            agreementVerified: boolean;
+            replacementPeriodDays: number | null;
+            guaranteeEndDate: string;
+            guaranteeRecordMatches: boolean;
+            invoicePaymentStatus: string;
+            priorFreeReplacements: number;
+            evaluatedAt: string;
+            evaluatedBy: string;
+            evidenceUrl: string;
+            reviewNotes: string;
+        };
         freeReplacement: boolean;
         exclusions: Record<string, boolean>;
         manualOverride: boolean;
@@ -151,6 +177,19 @@ export declare function getReplacement(auth: AuthContext, id: string): Promise<{
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityResultLabel: string;
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        agreementVerified: boolean;
+        replacementPeriodDays: number | null;
+        guaranteeEndDate: string;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: string;
+        priorFreeReplacements: number;
+        evaluatedAt: string;
+        evaluatedBy: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+    };
     freeReplacement: boolean;
     exclusions: Record<string, boolean>;
     manualOverride: boolean;
@@ -202,6 +241,19 @@ export declare function createReplacement(auth: AuthContext, input: CreateReplac
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityResultLabel: string;
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        agreementVerified: boolean;
+        replacementPeriodDays: number | null;
+        guaranteeEndDate: string;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: string;
+        priorFreeReplacements: number;
+        evaluatedAt: string;
+        evaluatedBy: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+    };
     freeReplacement: boolean;
     exclusions: Record<string, boolean>;
     manualOverride: boolean;
@@ -253,6 +305,19 @@ export declare function updateReplacement(auth: AuthContext, id: string, input: 
     eligibilityResult: "" | "APPROVED" | "REVIEW" | "NOT_ELIGIBLE";
     eligibilityResultLabel: string;
     eligibilityReasons: string[];
+    eligibilityBasis: {
+        agreementNumber: string;
+        agreementVerified: boolean;
+        replacementPeriodDays: number | null;
+        guaranteeEndDate: string;
+        guaranteeRecordMatches: boolean;
+        invoicePaymentStatus: string;
+        priorFreeReplacements: number;
+        evaluatedAt: string;
+        evaluatedBy: string;
+        evidenceUrl: string;
+        reviewNotes: string;
+    };
     freeReplacement: boolean;
     exclusions: Record<string, boolean>;
     manualOverride: boolean;

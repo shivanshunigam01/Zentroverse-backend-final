@@ -44,6 +44,17 @@ export const contactPersonSchema = z.object({
   phone: optionalText(30),
 })
 
+export const kycEvidenceSchema = z.object({
+  id: z.string().optional(),
+  documentType: z.string().trim().min(1, "Enter a document type").max(100),
+  fileName: optionalText(200),
+  evidenceUrl: z.url("Enter a valid evidence URL").max(500).refine((value) => /^https?:\/\//i.test(value), {
+    message: "Evidence URL must use HTTP or HTTPS",
+  }),
+  status: z.enum(["PENDING", "VERIFIED", "REJECTED"]).optional(),
+  reviewNotes: optionalText(1000),
+})
+
 export const createClientSchema = z.object({
   companyName: z.string().trim().min(2, "Enter a company name").max(160),
   legalEntityName: optionalText(200),
@@ -60,8 +71,10 @@ export const createClientSchema = z.object({
   status: z.enum(CLIENT_STATUSES).optional(),
   onboardingStatus: z.enum(CLIENT_ONBOARDING_STATUSES).optional(),
   KYCStatus: z.enum(CLIENT_KYC_STATUSES).optional(),
+  kycEvidence: z.array(kycEvidenceSchema).max(20).optional(),
   invoiceSubmissionProcess: optionalText(1000),
   purchaseOrderRequired: z.boolean().optional(),
+  purchaseOrderRequirements: optionalText(1000),
   vendorCode: optionalText(100),
   paymentCycleDays: z.coerce.number().int().min(0).max(365).optional(),
   authorizedSignatory: optionalText(160),
